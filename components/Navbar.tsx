@@ -7,10 +7,17 @@ import { useScrolled } from "@/hooks/useScrolled";
 import { NAV_LINKS } from "@/lib/constants/nav-links";
 import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/layout/Logo";
-import { LangDropdown } from "@/components/layout/LangDropdown";
+import { LangToggle } from "@/components/layout/LangToggle";
 import { MobileDrawer } from "@/components/layout/MobileDrawer";
+import type { Dictionary } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/locales";
 
-export default function Navbar() {
+type NavbarProps = {
+  dict: Dictionary["nav"];
+  locale: Locale;
+};
+
+export default function Navbar({ dict, locale }: NavbarProps) {
   const scrolled = useScrolled();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isTransparent = !scrolled && !drawerOpen;
@@ -41,7 +48,7 @@ export default function Navbar() {
               style={{ animationDelay: `${120 + index * 60}ms`, animationDuration: "500ms" }}
             >
               <a href={link.href} className="transition-colors hover:text-brand-blue">
-                {link.label}
+                {dict[link.key]}
               </a>
             </span>
           ))}
@@ -51,15 +58,15 @@ export default function Navbar() {
           className="animate-fade-up hidden items-center gap-2.5 opacity-0 lg:flex"
           style={{ animationDelay: "500ms", animationDuration: "500ms" }}
         >
-          <LangDropdown />
+          <LangToggle locale={locale} />
           <Button variant="primary" href="#programs">
-            Register
+            {dict.register}
           </Button>
         </div>
 
         <button
           type="button"
-          aria-label={drawerOpen ? "Close menu" : "Open menu"}
+          aria-label={drawerOpen ? dict.closeMenu : dict.openMenu}
           onClick={() => setDrawerOpen((v) => !v)}
           className={`animate-fade-up flex h-10 w-10 items-center justify-center opacity-0 transition-colors duration-300 lg:hidden ${iconColorClass}`}
           style={{ animationDelay: "120ms", animationDuration: "500ms" }}
@@ -91,7 +98,7 @@ export default function Navbar() {
           </AnimatePresence>
         </button>
 
-        <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+        <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} dict={dict} locale={locale} />
       </div>
     </header>
   );

@@ -3,14 +3,18 @@
 import { AnimatePresence, motion } from "motion/react";
 import { NAV_LINKS } from "@/lib/constants/nav-links";
 import { Button } from "@/components/ui/Button";
-import { LangDropdown } from "@/components/layout/LangDropdown";
+import { LangToggle } from "@/components/layout/LangToggle";
+import type { Dictionary } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/locales";
 
 type MobileDrawerProps = {
   open: boolean;
   onClose: () => void;
+  dict: Dictionary["nav"];
+  locale: Locale;
 };
 
-export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
+export function MobileDrawer({ open, onClose, dict, locale }: MobileDrawerProps) {
   return (
     <AnimatePresence>
       {open && (
@@ -34,15 +38,15 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + index * 0.05 }}
               >
-                {link.label}
+                {dict[link.key]}
               </motion.a>
             ))}
           </nav>
 
           <div className="flex flex-col items-center gap-3 px-6 pt-2 pb-6">
-            <LangDropdown />
+            <LangToggle locale={locale} />
             <Button variant="primary" href="#programs" onClick={onClose} className="w-full justify-center">
-              Register
+              {dict.register}
             </Button>
           </div>
         </motion.div>
