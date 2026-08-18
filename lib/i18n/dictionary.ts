@@ -59,6 +59,8 @@ export type Dictionary = {
   testimonials: {
     eyebrow: string;
     title: string;
+    pauseScroll: string;
+    resumeScroll: string;
     items: Record<"ayu" | "rafael" | "sarah" | "budi" | "mei", { quote: string; role: string }>;
   };
   location: {
@@ -91,7 +93,8 @@ export type Dictionary = {
     privacyPolicy: string;
     termsOfService: string;
     subscriptionAgreement: string;
-    address: string;
+    lineOfficialAccount: string;
+    lineId: string;
     backToTop: string;
     rightsReserved: string;
     builtBy: string;

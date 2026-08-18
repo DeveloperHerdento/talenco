@@ -114,6 +114,8 @@ const ja: Dictionary = {
   testimonials: {
     eyebrow: "参加者の声",
     title: "過去の参加者の声。",
+    pauseScroll: "スクロールを一時停止",
+    resumeScroll: "スクロールを再開",
     items: {
       ayu: {
         quote:
@@ -201,7 +203,8 @@ const ja: Dictionary = {
     privacyPolicy: "プライバシーポリシー",
     termsOfService: "利用規約",
     subscriptionAgreement: "サブスクリプション規約",
-    address: "インドネシア大学、デポック、インドネシア",
+    lineOfficialAccount: "LINE Official Account @601ffdki",
+    lineId: "LINE id: talenco",
     backToTop: "トップに戻る",
     rightsReserved: "全著作権所有。",
     builtBy: "制作",

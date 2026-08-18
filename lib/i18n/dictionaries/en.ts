@@ -115,6 +115,8 @@ const en: Dictionary = {
   testimonials: {
     eyebrow: "Testimonials",
     title: "What Past Participants Say.",
+    pauseScroll: "Pause scrolling",
+    resumeScroll: "Resume scrolling",
     items: {
       ayu: {
         quote:
@@ -202,7 +204,8 @@ const en: Dictionary = {
     privacyPolicy: "Privacy Policy",
     termsOfService: "Terms of Service",
     subscriptionAgreement: "Subscription Agreement",
-    address: "Universitas Indonesia, Depok, Indonesia",
+    lineOfficialAccount: "LINE Official Account @601ffdki",
+    lineId: "LINE id: talenco",
     backToTop: "Back to top",
     rightsReserved: "All rights reserved.",
     builtBy: "Built by",
