@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/layout/Navbar";
 import { Hero } from "@/components/sections/Hero";
 import { About } from "@/components/sections/About";
 import { Participants } from "@/components/sections/Participants";
@@ -27,15 +27,22 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
         <Hero dict={dict.hero} />
         <About dict={dict.about} />
         <Participants dict={dict.participants} />
-        <Programs dict={dict.programs} />
-        <Benefits dict={dict.benefits} />
+
+        <div className="relative w-full">
+          <div className="absolute inset-2 rounded-[20px] bg-[#E9F2FF] md:inset-3" />
+          <div className="relative z-10">
+            <Programs dict={dict.programs} />
+            <Benefits dict={dict.benefits} />
+          </div>
+        </div>
+
         <Timeline dict={dict.timeline} />
         <Testimonials dict={dict.testimonials} />
         <Location dict={dict.location} />
         <FAQ dict={dict.faq} />
         <CTA dict={dict.cta} />
       </main>
-      <Footer nav={dict.nav} programs={dict.programs} dict={dict.footer} />
+      <Footer nav={dict.nav} dict={dict.footer} locale={lang} />
     </>
   );
 }
