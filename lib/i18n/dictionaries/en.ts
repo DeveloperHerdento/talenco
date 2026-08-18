@@ -108,9 +108,8 @@ const en: Dictionary = {
     items: {
       registration: "Registration Period",
       payment: "Payment Deadline",
-      visa: "Visa Issuance",
+      arrival: "Participants Arrival",
       program: "Program Period",
-      departure: "Participants Departure",
     },
   },
   testimonials: {
@@ -131,6 +130,16 @@ const en: Dictionary = {
         quote:
           "The weekend trip to the Payung Islands was the highlight. It wasn't just a vacation; it was a chance to apply our new language skills in real-life situations with our international cohort.",
         role: "Exchange Student, UK",
+      },
+      budi: {
+        quote:
+          "Thanks to this program, I built the confidence and practical skills to apply for international internships. The mentors genuinely cared about our growth every step of the way.",
+        role: "Fresh Graduate, Jakarta",
+      },
+      mei: {
+        quote:
+          "From day one, the hands-on projects felt like real work, not just training. I walked away with a portfolio I could actually show employers, and a network across three countries.",
+        role: "Marketing Trainee, Singapore",
       },
     },
   },
@@ -181,18 +190,22 @@ const en: Dictionary = {
   },
   cta: {
     heading: "Ready to Start Your [hl]Global Career[/hl]?",
+    subtitle: "Join hundreds of participants building real global career skills with TalenCo.",
     ctaPrimary: "Register Now",
-    ctaSecondary: "Get More Information",
   },
   footer: {
     tagline:
       "The Global Career Starter Program — helping you build practical global skills, real project experience, and a network that lasts.",
-    programsHeading: "Programs",
     quickLinksHeading: "Quick Links",
+    legalHeading: "Legal",
     contactHeading: "Contact Us",
+    privacyPolicy: "Privacy Policy",
+    termsOfService: "Terms of Service",
+    subscriptionAgreement: "Subscription Agreement",
     address: "Universitas Indonesia, Depok, Indonesia",
     backToTop: "Back to top",
     rightsReserved: "All rights reserved.",
+    builtBy: "Built by",
   },
   notFound: {
     eyebrow: "404 Error",

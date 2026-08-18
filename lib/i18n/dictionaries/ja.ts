@@ -107,9 +107,8 @@ const ja: Dictionary = {
     items: {
       registration: "登録期間",
       payment: "支払期限",
-      visa: "ビザ発給",
+      arrival: "参加者到着",
       program: "プログラム期間",
-      departure: "参加者出発",
     },
   },
   testimonials: {
@@ -130,6 +129,16 @@ const ja: Dictionary = {
         quote:
           "パユン諸島への週末旅行が一番の思い出です。単なる休暇ではなく、国際的な仲間たちと実際の場面で新しい語学力を活かす機会になりました。",
         role: "交換留学生、イギリス",
+      },
+      budi: {
+        quote:
+          "このプログラムのおかげで、海外インターンシップに応募する自信と実践的なスキルが身につきました。メンターは私たちの成長を最後まで心から気にかけてくれました。",
+        role: "新卒者、ジャカルタ",
+      },
+      mei: {
+        quote:
+          "初日から、実践的なプロジェクトは単なる研修ではなく本物の仕事のように感じられました。実際に雇用主に見せられるポートフォリオと、3カ国にまたがるネットワークを得ることができました。",
+        role: "マーケティング研修生、シンガポール",
       },
     },
   },
@@ -180,18 +189,22 @@ const ja: Dictionary = {
   },
   cta: {
     heading: "[hl]グローバルキャリア[/hl]を今すぐ始めませんか?",
+    subtitle: "TalenCoと共に、実践的なグローバルキャリアスキルを築く仲間に加わりましょう。",
     ctaPrimary: "今すぐ登録",
-    ctaSecondary: "詳細を見る",
   },
   footer: {
     tagline:
       "グローバルキャリア・スタータープログラム — 実践的なグローバルスキル、実務経験、そして長く続くネットワークづくりをサポートします。",
-    programsHeading: "プログラム",
     quickLinksHeading: "クイックリンク",
+    legalHeading: "法的情報",
     contactHeading: "お問い合わせ",
+    privacyPolicy: "プライバシーポリシー",
+    termsOfService: "利用規約",
+    subscriptionAgreement: "サブスクリプション規約",
     address: "インドネシア大学、デポック、インドネシア",
     backToTop: "トップに戻る",
     rightsReserved: "全著作権所有。",
+    builtBy: "制作",
   },
   notFound: {
     eyebrow: "404エラー",
