@@ -1,1 +1,87 @@
 @import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-plus-jakarta-sans), system-ui, sans-serif;
+
+  --color-brand-orange: #ff6e00;
+  --color-brand-red: #ff4000;
+  --color-brand-blue: #2081f9;
+  --color-brand-amber: #ff9000;
+
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-fade-in: fade-in 0.7s ease-out forwards;
+  --animate-marquee: marquee 36s linear infinite;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* Track holds two identical copies of the content, so shifting exactly
+       half its width loops seamlessly back to the start. */
+    transform: translateX(-50%);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d4 transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #d4d4d4;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #a3a3a3;
+  background-clip: padding-box;
+}
+
+body {
+  background: #ffffff;
+}
+
+.text-gradient-brand {
+  background-image: linear-gradient(to bottom, var(--color-brand-orange), var(--color-brand-red));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.btn-gradient-brand {
+  background-image: linear-gradient(to bottom, var(--color-brand-orange), var(--color-brand-red));
+}
