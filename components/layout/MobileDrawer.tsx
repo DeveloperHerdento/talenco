@@ -43,9 +43,9 @@ export function MobileDrawer({ open, onClose, dict, locale }: MobileDrawerProps)
             ))}
           </nav>
 
-          <div className="flex flex-col items-center gap-3 px-6 pt-2 pb-6">
-            <LangToggle locale={locale} />
-            <Button variant="primary" href="#programs" onClick={onClose} className="w-full justify-center">
+          <div className="flex flex-row items-center gap-3 px-6 pt-2 pb-6">
+            <LangToggle locale={locale} className="w-1/3 justify-center" />
+            <Button variant="primary" href="#programs" onClick={onClose} className="w-2/3 justify-center">
               {dict.register}
             </Button>
           </div>

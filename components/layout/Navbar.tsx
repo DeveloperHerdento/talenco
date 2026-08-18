@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 import { useScrolled } from "@/hooks/useScrolled";
 import { NAV_LINKS } from "@/lib/constants/nav-links";
 import { Button } from "@/components/ui/Button";
+import { FadeUp } from "@/components/ui/FadeUp";
 import { Logo } from "@/components/layout/Logo";
 import { LangToggle } from "@/components/layout/LangToggle";
 import { MobileDrawer } from "@/components/layout/MobileDrawer";
@@ -33,38 +34,29 @@ export default function Navbar({ dict, locale }: NavbarProps) {
       <div
         className={`relative flex w-full max-w-[1240px] items-center justify-between px-5 py-4 transition-all duration-300 md:px-8 lg:rounded-full lg:py-4 lg:backdrop-blur-md lg:shadow-md lg:shadow-black/5 ${barBgClass} ${barShadowClass}`}
       >
-        <span
-          className={`animate-fade-up inline-block opacity-0 transition-[filter] duration-300 lg:filter-none ${logoFilterClass}`}
-          style={{ animationDelay: "0ms", animationDuration: "500ms" }}
-        >
+        <FadeUp className={`transition-[filter] duration-300 lg:filter-none ${logoFilterClass}`} durationMs={500}>
           <Logo />
-        </span>
+        </FadeUp>
 
         <nav className="hidden items-center gap-8 text-sm text-black lg:flex">
           {NAV_LINKS.map((link, index) => (
-            <span
-              key={link.href}
-              className="animate-fade-up inline-block opacity-0"
-              style={{ animationDelay: `${120 + index * 60}ms`, animationDuration: "500ms" }}
-            >
+            <FadeUp key={link.href} delayMs={120 + index * 60} durationMs={500}>
               <a href={link.href} className="transition-colors hover:text-brand-blue">
                 {dict[link.key]}
               </a>
-            </span>
+            </FadeUp>
           ))}
         </nav>
 
-        <div
-          className="animate-fade-up hidden items-center gap-2.5 opacity-0 lg:flex"
-          style={{ animationDelay: "500ms", animationDuration: "500ms" }}
-        >
+        <FadeUp as="div" className="hidden items-center gap-2.5 lg:flex" delayMs={500} durationMs={500}>
           <LangToggle locale={locale} />
-          <a   href="https://docs.google.com/forms/d/e/1FAIpQLSewS35OEIG1OmTJ-CQwl4RFpSsj-3QwRYJWEObNpvr6mP6h6A/viewform" target="_blank">
-            <Button variant="primary">
-              {dict.register}
-            </Button>
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSewS35OEIG1OmTJ-CQwl4RFpSsj-3QwRYJWEObNpvr6mP6h6A/viewform"
+            target="_blank"
+          >
+            <Button variant="primary">{dict.register}</Button>
           </a>
-        </div>
+        </FadeUp>
 
         <button
           type="button"
