@@ -1,11 +1,15 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
+import { RichText } from "@/components/ui/RichText";
+import type { Dictionary } from "@/lib/i18n/dictionary";
 
-export function Hero() {
+const NAVBAR_ANIMATION_END_MS = 750;
+
+export function Hero({ dict }: { dict: Dictionary["hero"] }) {
   return (
     <section
       id="top"
-      className="relative flex min-h-[740px] w-full items-center overflow-hidden pt-32 pb-16 md:pt-32"
+      className="relative flex min-h-[520px] w-full items-center overflow-hidden pt-28 pb-12 sm:min-h-[580px] md:min-h-[660px] md:pt-32 md:pb-16 lg:min-h-[740px]"
     >
       <div className="absolute inset-2 overflow-hidden rounded-[20px] md:inset-3">
         <Image
@@ -26,30 +30,54 @@ export function Hero() {
       </div>
 
       <div className="relative z-10 mx-auto w-full max-w-[1240px] px-4 md:px-8">
-        <div className="flex max-w-5xl flex-col gap-10">
-          <h1 className="animate-fade-up text-4xl font-extrabold tracking-normal text-white opacity-0 sm:text-6xl lg:text-7xl xl:text-[96px] xl:leading-[0.95]">
-            Start Your <span className="text-brand-orange">Global</span>{" "}
-            <span className="text-brand-orange">Career</span> Here.
+        <div className="flex max-w-5xl flex-col gap-12">
+          <h1 className="flex flex-col text-6xl leading-tight font-extrabold tracking-normal text-white sm:text-5xl md:text-6xl lg:text-7xl lg:leading-tight xl:text-[96px] xl:leading-tight">
+            <span
+              className="animate-fade-up block opacity-0"
+              style={{ animationDelay: `${NAVBAR_ANIMATION_END_MS + 0}ms`, animationDuration: "900ms" }}
+            >
+              <RichText text={dict.titleLine1} />
+            </span>
+            <span
+              className="animate-fade-up block opacity-0"
+              style={{ animationDelay: `${NAVBAR_ANIMATION_END_MS + 300}ms`, animationDuration: "900ms" }}
+            >
+              <RichText text={dict.titleLine2} />
+            </span>
           </h1>
 
-          <p
-            className="leading-normal animate-fade-up text-base text-white opacity-0 sm:text-xl lg:text-2xl"
-            style={{ animationDelay: "150ms" }}
-          >
-            Interested in working internationally but unsure how to begin? <br/> Develop practical global
-            skills, improve your English, and <br/> gain real international experience.
+          <p className="text-base leading-normal text-white sm:text-lg md:text-xl lg:text-2xl">
+            {dict.paragraph.map((line, index) => (
+              <span
+                key={line}
+                className="animate-fade-up block opacity-0"
+                style={{
+                  animationDelay: `${NAVBAR_ANIMATION_END_MS + 650 + index * 150}ms`,
+                  animationDuration: "700ms",
+                }}
+              >
+                {line}
+              </span>
+            ))}
           </p>
 
-          <div
-            className="animate-fade-up flex flex-wrap items-center gap-3 opacity-0"
-            style={{ animationDelay: "300ms" }}
-          >
-            <Button variant="primary" href="#programs">
-              Register Now
-            </Button>
-            <Button variant="secondary" href="#contact" className="w-[202px] justify-center">
-              Get More Information
-            </Button>
+          <div className="flex flex-wrap items-center gap-3">
+            <span
+              className="animate-fade-up inline-block opacity-0"
+              style={{ animationDelay: `${NAVBAR_ANIMATION_END_MS + 1200}ms`, animationDuration: "700ms" }}
+            >
+              <Button variant="primary" href="#programs">
+                {dict.ctaPrimary}
+              </Button>
+            </span>
+            <span
+              className="animate-fade-up inline-block opacity-0"
+              style={{ animationDelay: `${NAVBAR_ANIMATION_END_MS + 1400}ms`, animationDuration: "700ms" }}
+            >
+              <Button variant="secondary" href="#contact" className="w-[202px] justify-center">
+                {dict.ctaSecondary}
+              </Button>
+            </span>
           </div>
         </div>
       </div>
