@@ -66,17 +66,21 @@ export function Hero({ dict }: { dict: Dictionary["hero"] }) {
               className="animate-fade-up inline-block opacity-0"
               style={{ animationDelay: `${NAVBAR_ANIMATION_END_MS + 1200}ms`, animationDuration: "700ms" }}
             >
-              <Button variant="primary" href="#programs">
-                {dict.ctaPrimary}
-              </Button>
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSewS35OEIG1OmTJ-CQwl4RFpSsj-3QwRYJWEObNpvr6mP6h6A/viewform" target="_blank">
+                <Button variant="primary"> 
+                  {dict.ctaPrimary}
+                </Button>
+              </a>
             </span>
             <span
               className="animate-fade-up inline-block opacity-0"
               style={{ animationDelay: `${NAVBAR_ANIMATION_END_MS + 1400}ms`, animationDuration: "700ms" }}
             >
-              <Button variant="secondary" href="#contact" className="w-[202px] justify-center">
-                {dict.ctaSecondary}
-              </Button>
+              <a href="https://docs.google.com/document/d/1QlYQ3RWkfynswIt028RzrwrJCfKzb2haRj9vrkN9vQo/edit?tab=t.0#heading=h.iohq25xcrl5ns" target="_blank">
+                <Button variant="secondary"> 
+                  {dict.ctaSecondary}
+                </Button>
+              </a>
             </span>
           </div>
         </div>

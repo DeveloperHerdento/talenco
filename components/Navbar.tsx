@@ -59,9 +59,11 @@ export default function Navbar({ dict, locale }: NavbarProps) {
           style={{ animationDelay: "500ms", animationDuration: "500ms" }}
         >
           <LangToggle locale={locale} />
-          <Button variant="primary" href="#programs">
-            {dict.register}
-          </Button>
+          <a   href="https://docs.google.com/forms/d/e/1FAIpQLSewS35OEIG1OmTJ-CQwl4RFpSsj-3QwRYJWEObNpvr6mP6h6A/viewform" target="_blank">
+            <Button variant="primary">
+              {dict.register}
+            </Button>
+          </a>
         </div>
 
         <button
