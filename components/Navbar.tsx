@@ -1,41 +1,57 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import { AnimatePresence, motion } from "motion/react";
+import { Menu, X } from "lucide-react";
 import { useScrolled } from "@/hooks/useScrolled";
 import { NAV_LINKS } from "@/lib/constants/nav-links";
 import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/layout/Logo";
+import { LangDropdown } from "@/components/layout/LangDropdown";
 import { MobileDrawer } from "@/components/layout/MobileDrawer";
 
 export default function Navbar() {
   const scrolled = useScrolled();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const isTransparent = !scrolled && !drawerOpen;
+
+  const headerPaddingClass = isTransparent ? "pt-2" : "pt-0";
+  const barBgClass = `${isTransparent ? "bg-transparent" : "bg-white"} lg:bg-white`;
+  const barShadowClass = scrolled && !drawerOpen ? "shadow-lg shadow-black/10" : "";
+  const logoFilterClass = isTransparent ? "brightness-0 invert" : "";
+  const iconColorClass = isTransparent ? "text-white" : "text-brand-orange";
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-10 md:px-14 md:pt-12">
+    <header className={`fixed inset-x-0 top-0 z-50 flex justify-center lg:px-14 lg:pt-12 ${headerPaddingClass}`}>
       <div
-        className={`flex w-full max-w-[1240px] items-center justify-between rounded-full bg-white/90 px-5 py-3 backdrop-blur-md transition-shadow duration-300 md:px-8 md:py-4 ${
-          scrolled ? "shadow-lg shadow-black/10" : ""
-        }`}
+        className={`relative flex w-full max-w-[1240px] items-center justify-between px-5 py-4 transition-all duration-300 md:px-8 lg:rounded-full lg:py-4 lg:backdrop-blur-md lg:shadow-md lg:shadow-black/5 ${barBgClass} ${barShadowClass}`}
       >
-        <Logo />
+        <span
+          className={`animate-fade-up inline-block opacity-0 transition-[filter] duration-300 lg:filter-none ${logoFilterClass}`}
+          style={{ animationDelay: "0ms", animationDuration: "500ms" }}
+        >
+          <Logo />
+        </span>
 
         <nav className="hidden items-center gap-8 text-sm text-black lg:flex">
-          {NAV_LINKS.map((link) => (
-            <a key={link.href} href={link.href} className="transition-colors hover:text-brand-blue">
-              {link.label}
-            </a>
+          {NAV_LINKS.map((link, index) => (
+            <span
+              key={link.href}
+              className="animate-fade-up inline-block opacity-0"
+              style={{ animationDelay: `${120 + index * 60}ms`, animationDuration: "500ms" }}
+            >
+              <a href={link.href} className="transition-colors hover:text-brand-blue">
+                {link.label}
+              </a>
+            </span>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2.5 lg:flex">
-          <Button
-            variant="outline"
-            icon={<Image src="/images/figma/icon-globe.svg" alt="" width={16} height={16} />}
-          >
-            Lang
-          </Button>
+        <div
+          className="animate-fade-up hidden items-center gap-2.5 opacity-0 lg:flex"
+          style={{ animationDelay: "500ms", animationDuration: "500ms" }}
+        >
+          <LangDropdown />
           <Button variant="primary" href="#programs">
             Register
           </Button>
@@ -43,19 +59,40 @@ export default function Navbar() {
 
         <button
           type="button"
-          aria-label="Open menu"
-          onClick={() => setDrawerOpen(true)}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-[#e0e0e0] lg:hidden"
+          aria-label={drawerOpen ? "Close menu" : "Open menu"}
+          onClick={() => setDrawerOpen((v) => !v)}
+          className={`animate-fade-up flex h-10 w-10 items-center justify-center opacity-0 transition-colors duration-300 lg:hidden ${iconColorClass}`}
+          style={{ animationDelay: "120ms", animationDuration: "500ms" }}
         >
-          <span className="flex flex-col gap-1.5">
-            <span className="h-0.5 w-5 rounded-full bg-black" />
-            <span className="h-0.5 w-5 rounded-full bg-black" />
-            <span className="h-0.5 w-3.5 rounded-full bg-black" />
-          </span>
+          <AnimatePresence mode="wait" initial={false}>
+            {drawerOpen ? (
+              <motion.span
+                key="close"
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className="flex"
+              >
+                <X size={26} strokeWidth={2} />
+              </motion.span>
+            ) : (
+              <motion.span
+                key="menu"
+                initial={{ rotate: 90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: -90, opacity: 0 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className="flex"
+              >
+                <Menu size={26} strokeWidth={2} />
+              </motion.span>
+            )}
+          </AnimatePresence>
         </button>
-      </div>
 
-      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+        <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      </div>
     </header>
   );
 }
