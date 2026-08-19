@@ -3,22 +3,30 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Stagger, StaggerItem } from "@/components/ui/Stagger";
 import { MapEmbed } from "@/components/ui/MapEmbed";
 import type { Dictionary } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/locales";
 
 const CAMPUS_ADDRESS =
   "Lembaga Bahasa Internasional Fakultas Ilmu Pengetahuan Budaya Gedung X - Koentjaraningrat, Kampus UI Lantai 1, Pondok Cina, Kecamatan Beji, Kota Depok, Jawa Barat 16424";
-const MAP_SRC = `https://www.google.com/maps?q=${encodeURIComponent(CAMPUS_ADDRESS)}&output=embed`;
 
-export function Location({ dict }: { dict: Dictionary["location"] }) {
+function getMapSrc(locale: Locale) {
+  return `https://www.google.com/maps?q=${encodeURIComponent(CAMPUS_ADDRESS)}&hl=${locale}&output=embed`;
+}
+
+export function Location({ dict, locale }: { dict: Dictionary["location"]; locale: Locale }) {
   return (
     <section id="location" className="w-full py-14 md:py-18 lg:py-20">
       <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-12 px-4 md:gap-16 md:px-8">
         <Reveal className="flex flex-col items-center gap-5 text-center">
-          <SectionHeading eyebrow={dict.eyebrow} title={dict.title} align="center" />
+          <SectionHeading eyebrow={dict.eyebrow} align="center" />
         </Reveal>
 
         <Stagger className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
           <StaggerItem className="relative h-64 overflow-hidden rounded-[20px] shadow-lg shadow-black/10 lg:h-[320px]">
-            <MapEmbed src={MAP_SRC} title={dict.campusName} className="absolute inset-0 h-full w-full overflow-hidden" />
+            <MapEmbed
+              src={getMapSrc(locale)}
+              title={dict.campusName}
+              className="absolute inset-0 h-full w-full overflow-hidden"
+            />
           </StaggerItem>
 
           <StaggerItem className="flex flex-col gap-5">

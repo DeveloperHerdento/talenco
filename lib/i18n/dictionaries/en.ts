@@ -101,7 +101,7 @@ const en: Dictionary = {
     },
   },
   timeline: {
-    eyebrow: "Program Timeline",
+    eyebrow: "Registration Timeline",
     title: "Your Journey at a Glance.",
     inProgress: "In progress",
     items: {
@@ -151,7 +151,6 @@ const en: Dictionary = {
   },
   location: {
     eyebrow: "Program Location",
-    title: "Where It All Happens.",
     campusName: "Universitas Indonesia Campus",
     campusLocation: "Depok, Jakarta, Indonesia",
     body: "The program is proudly hosted at the prestigious Universitas Indonesia campus, providing our participants access to a world-class environment and a collaborative space designed for both cultural and professional growth.",

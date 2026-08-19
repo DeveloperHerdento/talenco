@@ -38,7 +38,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
 
         <Timeline dict={dict.timeline} locale={lang} />
         <Testimonials dict={dict.testimonials} />
-        <Location dict={dict.location} />
+        <Location dict={dict.location} locale={lang} />
         <FAQ dict={dict.faq} />
         <CTA dict={dict.cta} />
       </main>

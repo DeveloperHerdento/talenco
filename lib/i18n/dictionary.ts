@@ -64,7 +64,6 @@ export type Dictionary = {
   };
   location: {
     eyebrow: string;
-    title: string;
     campusName: string;
     campusLocation: string;
     body: string;
