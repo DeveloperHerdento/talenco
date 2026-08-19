@@ -7,7 +7,17 @@ import { Reveal } from "@/components/ui/Reveal";
 import { TESTIMONIALS } from "@/lib/constants/testimonials";
 import type { Dictionary } from "@/lib/i18n/dictionary";
 
-function TestimonialCard({ quote, name, role }: { quote: string; name: string; role: string }) {
+function TestimonialCard({
+  quote,
+  name,
+  role,
+  year,
+}: {
+  quote: string;
+  name: string;
+  role: string;
+  year: string;
+}) {
   return (
     <div className="flex w-[320px] shrink-0 flex-col gap-6 rounded-2xl border-[0.5px] border-[#e9e9e9] bg-white p-8 shadow-sm shadow-black/5 md:w-[380px]">
       <Quote className="text-brand-orange size-10" strokeWidth={1.75} />
@@ -15,6 +25,7 @@ function TestimonialCard({ quote, name, role }: { quote: string; name: string; r
       <div>
         <p className="text-base font-semibold text-black">{name}</p>
         <p className="text-xs font-light text-brand-blue">{role}</p>
+        <p className="mt-0.5 text-xs font-light text-black/40">{year}</p>
       </div>
     </div>
   );
@@ -57,7 +68,13 @@ export function Testimonials({ dict }: { dict: Dictionary["testimonials"] }) {
             {TESTIMONIALS.map((testimonial) => {
               const item = dict.items[testimonial.key];
               return (
-                <TestimonialCard key={testimonial.key} quote={item.quote} name={testimonial.name} role={item.role} />
+                <TestimonialCard
+                  key={testimonial.key}
+                  quote={item.quote}
+                  name={testimonial.name}
+                  role={item.role}
+                  year={item.year}
+                />
               );
             })}
             {/* Duplicate set makes the loop seamless; hidden from assistive tech so content isn't announced twice. */}
@@ -70,6 +87,7 @@ export function Testimonials({ dict }: { dict: Dictionary["testimonials"] }) {
                     quote={item.quote}
                     name={testimonial.name}
                     role={item.role}
+                    year={item.year}
                   />
                 );
               })}
