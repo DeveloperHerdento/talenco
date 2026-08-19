@@ -141,13 +141,27 @@ export function Footer({ nav, dict, locale }: FooterProps) {
                   +62 85 1178 04811 
                 </a>
               </li>
-              <li className="flex items-center gap-2">
-                <FontAwesomeIcon icon={faLine} className="size-3.75 shrink-0" aria-hidden="true" />
-                {dict.lineOfficialAccount}
+              <li>
+                <a
+                  href="https://line.me/R/ti/p/%40601ffdki"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 transition-colors hover:text-brand-blue"
+                >
+                  <FontAwesomeIcon icon={faLine} className="size-3.75 shrink-0" aria-hidden="true" />
+                  {dict.lineOfficialAccount}
+                </a>
               </li>
-              <li className="flex items-center gap-2">
-                <FontAwesomeIcon icon={faLine} className="size-3.75 shrink-0" aria-hidden="true" />
-                {dict.lineId}
+              <li>
+                <a
+                  href="https://line.me/ti/p/~talenco"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 transition-colors hover:text-brand-blue"
+                >
+                  <FontAwesomeIcon icon={faLine} className="size-3.75 shrink-0" aria-hidden="true" />
+                  {dict.lineId}
+                </a>
               </li>
             </ul>
           </div>
