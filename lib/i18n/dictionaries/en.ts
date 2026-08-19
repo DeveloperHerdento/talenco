@@ -48,7 +48,6 @@ const en: Dictionary = {
   },
   programs: {
     eyebrow: "Program Overview",
-    title: "Here's What You'll Walk Away With.",
     items: {
       english: {
         title: "English Class",
@@ -122,26 +121,31 @@ const en: Dictionary = {
         quote:
           "The Global Career Starter Program completely transformed my confidence in speaking English. The cultural immersion activities were incredibly valuable, and I now feel ready to take on international roles.",
         role: "Student, Universitas Indonesia",
+        year: "2025",
       },
       rafael: {
         quote:
           "I was impressed by the practical digital marketing skills we learned. The networking sessions with professionals from Herdento Global Solution opened doors for my career that I didn't think were possible.",
         role: "Young Professional, Tokyo",
+        year: "2025",
       },
       sarah: {
         quote:
           "The weekend trip to the Payung Islands was the highlight. It wasn't just a vacation; it was a chance to apply our new language skills in real-life situations with our international cohort.",
         role: "Exchange Student, UK",
+        year: "2024",
       },
       budi: {
         quote:
           "Thanks to this program, I built the confidence and practical skills to apply for international internships. The mentors genuinely cared about our growth every step of the way.",
         role: "Fresh Graduate, Jakarta",
+        year: "2024",
       },
       mei: {
         quote:
           "From day one, the hands-on projects felt like real work, not just training. I walked away with a portfolio I could actually show employers, and a network across three countries.",
         role: "Marketing Trainee, Singapore",
+        year: "2023",
       },
     },
   },

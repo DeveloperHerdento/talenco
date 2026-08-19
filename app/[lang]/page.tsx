@@ -36,7 +36,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           </div>
         </div>
 
-        <Timeline dict={dict.timeline} />
+        <Timeline dict={dict.timeline} locale={lang} />
         <Testimonials dict={dict.testimonials} />
         <Location dict={dict.location} />
         <FAQ dict={dict.faq} />

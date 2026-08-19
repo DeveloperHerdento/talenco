@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronUp, Mail, MessageCircle, Phone } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLine } from "@fortawesome/free-brands-svg-icons";
+import { ChevronUp, Mail, Phone } from "lucide-react";
 import { NAV_LINKS } from "@/lib/constants/nav-links";
 import type { Dictionary } from "@/lib/i18n/dictionary";
 import type { Locale } from "@/lib/i18n/locales";
@@ -130,21 +132,21 @@ export function Footer({ nav, dict, locale }: FooterProps) {
               <li>
                 <a href="mailto:hello@talenco.co" className="flex items-center gap-2 transition-colors hover:text-brand-blue">
                   <Mail size={15} strokeWidth={1.75} className="shrink-0" />
-                  hello@talenco.co
+                  talencoindonesia@gmail.com
                 </a>
               </li>
               <li>
                 <a href="tel:+622156789012" className="flex items-center gap-2 transition-colors hover:text-brand-blue">
-                  <Phone size={15} strokeWidth={1.75} className="shrink-0" />
-                  +62 21 5678 9012
+                  <Phone size={15} strokeWidth={1.75} className="shrink-0" /> 
+                  +62 85 1178 04811 
                 </a>
               </li>
               <li className="flex items-center gap-2">
-                <MessageCircle size={15} strokeWidth={1.75} className="shrink-0" />
+                <FontAwesomeIcon icon={faLine} className="size-3.75 shrink-0" aria-hidden="true" />
                 {dict.lineOfficialAccount}
               </li>
               <li className="flex items-center gap-2">
-                <MessageCircle size={15} strokeWidth={1.75} className="shrink-0" />
+                <FontAwesomeIcon icon={faLine} className="size-3.75 shrink-0" aria-hidden="true" />
                 {dict.lineId}
               </li>
             </ul>

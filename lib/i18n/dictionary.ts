@@ -9,7 +9,7 @@ export type Dictionary = {
     about: string;
     programs: string;
     schedule: string;
-    article: string;
+    article?: string;
     faq: string;
     contact: string;
     register: string;
@@ -36,7 +36,6 @@ export type Dictionary = {
   };
   programs: {
     eyebrow: string;
-    title: string;
     items: Record<
       "english" | "bipa" | "digitalMarketing" | "careerPrep" | "culture" | "weekendTrip",
       { title: string; description: string }
@@ -61,7 +60,7 @@ export type Dictionary = {
     title: string;
     pauseScroll: string;
     resumeScroll: string;
-    items: Record<"ayu" | "rafael" | "sarah" | "budi" | "mei", { quote: string; role: string }>;
+    items: Record<"ayu" | "rafael" | "sarah" | "budi" | "mei", { quote: string; role: string; year: string }>;
   };
   location: {
     eyebrow: string;
