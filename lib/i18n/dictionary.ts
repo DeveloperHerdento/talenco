@@ -9,7 +9,7 @@ export type Dictionary = {
     about: string;
     programs: string;
     schedule: string;
-    article: string;
+    article?: string;
     faq: string;
     contact: string;
     register: string;
