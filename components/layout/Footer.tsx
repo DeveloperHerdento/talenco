@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronUp, Mail, MessageCircle, Phone } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLine } from "@fortawesome/free-brands-svg-icons";
+import { ChevronUp, Mail, Phone } from "lucide-react";
 import { NAV_LINKS } from "@/lib/constants/nav-links";
 import type { Dictionary } from "@/lib/i18n/dictionary";
 import type { Locale } from "@/lib/i18n/locales";
@@ -140,11 +142,11 @@ export function Footer({ nav, dict, locale }: FooterProps) {
                 </a>
               </li>
               <li className="flex items-center gap-2">
-                <MessageCircle size={15} strokeWidth={1.75} className="shrink-0" />
+                <FontAwesomeIcon icon={faLine} className="size-3.75 shrink-0" aria-hidden="true" />
                 {dict.lineOfficialAccount}
               </li>
               <li className="flex items-center gap-2">
-                <MessageCircle size={15} strokeWidth={1.75} className="shrink-0" />
+                <FontAwesomeIcon icon={faLine} className="size-3.75 shrink-0" aria-hidden="true" />
                 {dict.lineId}
               </li>
             </ul>
