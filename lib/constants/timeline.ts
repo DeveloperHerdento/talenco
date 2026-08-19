@@ -7,6 +7,7 @@ export type TimelineKey = "registration" | "payment" | "arrival" | "program";
 export type TimelineStep = {
   key: TimelineKey;
   date: string;
+  dateJa: string;
   start: string;
   end: string;
   icon: LucideIcon;
@@ -16,14 +17,23 @@ export const TIMELINE: TimelineStep[] = [
   {
     key: "registration",
     date: "3 Aug – 3 Nov 2026",
+    dateJa: "2026年8月3日～11月3日",
     start: "2026-08-03",
     end: "2026-11-03",
     icon: ClipboardList,
   },
-  { key: "payment", date: "4 Nov 2026", start: "2026-11-04", end: "2026-11-04", icon: CreditCard },
+  {
+    key: "payment",
+    date: "4 Nov 2026",
+    dateJa: "2026年11月4日",
+    start: "2026-11-04",
+    end: "2026-11-04",
+    icon: CreditCard,
+  },
   {
     key: "arrival",
     date: "29 November 2026",
+    dateJa: "2026年11月29日",
     start: "2026-11-29",
     end: "2026-11-29",
     icon: PlaneLanding,
@@ -31,6 +41,7 @@ export const TIMELINE: TimelineStep[] = [
   {
     key: "program",
     date: "30 November – 12 December 2026",
+    dateJa: "2026年11月30日～12月12日",
     start: "2026-11-30",
     end: "2026-12-12",
     icon: GraduationCap,

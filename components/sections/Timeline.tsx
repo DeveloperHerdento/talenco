@@ -6,6 +6,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { TIMELINE, getTimelineStatus, type TimelineStatus } from "@/lib/constants/timeline";
 import type { Dictionary } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/locales";
 
 const groupVariants: Variants = {
   hidden: {},
@@ -59,7 +60,7 @@ function Connector({ completed }: { completed: boolean }) {
   );
 }
 
-export function Timeline({ dict }: { dict: Dictionary["timeline"] }) {
+export function Timeline({ dict, locale }: { dict: Dictionary["timeline"]; locale: Locale }) {
   const statuses = TIMELINE.map((step) => getTimelineStatus(step));
 
   return (
@@ -91,7 +92,7 @@ export function Timeline({ dict }: { dict: Dictionary["timeline"] }) {
                   <p
                     className={`text-base font-bold ${status === "upcoming" ? "text-black/70" : "text-black"} md:text-lg`}
                   >
-                    {step.date}
+                    {locale === "ja" ? step.dateJa : step.date}
                   </p>
                   <p className="text-sm font-medium text-black/70">{dict.items[step.key]}</p>
                   {status === "active" && (
