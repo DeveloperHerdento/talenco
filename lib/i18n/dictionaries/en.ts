@@ -74,7 +74,7 @@ const en: Dictionary = {
       },
       weekendTrip: {
         title: "Weekend Trip",
-        description: "Experience the beauty of the Payung Islands with an optional weekend island getaway.",
+        description: "Enjoy an optional weekend island getaway to a beautiful destination (TBA).",
       },
     },
   },

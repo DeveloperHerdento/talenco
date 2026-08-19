@@ -66,7 +66,7 @@ export function Hero({ dict }: { dict: Dictionary["hero"] }) {
             </FadeUp>
             <FadeUp className="inline-block" delayMs={NAVBAR_ANIMATION_END_MS + 1400} durationMs={700}>
               <a
-                href="https://docs.google.com/document/d/1QlYQ3RWkfynswIt028RzrwrJCfKzb2haRj9vrkN9vQo/edit?tab=t.0#heading=h.iohq25xcrl5ns"
+                href="#"
                 target="_blank"
               >
                 <Button variant="secondary">{dict.ctaSecondary}</Button>
