@@ -73,7 +73,7 @@ const ja: Dictionary = {
       },
       weekendTrip: {
         title: "週末旅行",
-        description: "任意参加の週末旅行で、パユン諸島の美しさを体験できます。",
+        description: "任意参加の週末旅行で、美しい島（詳細未定）を訪れることができます。",
       },
     },
   },
