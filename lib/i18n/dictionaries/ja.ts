@@ -100,7 +100,7 @@ const ja: Dictionary = {
     },
   },
   timeline: {
-    eyebrow: "プログラムスケジュール",
+    eyebrow: "登録期間",
     title: "全体の流れが一目でわかります。",
     inProgress: "進行中",
     items: {
@@ -150,7 +150,6 @@ const ja: Dictionary = {
   },
   location: {
     eyebrow: "プログラムの開催地",
-    title: "すべてがここで行われます。",
     campusName: "インドネシア大学キャンパス",
     campusLocation: "デポック、ジャカルタ、インドネシア",
     body: "本プログラムは、名門インドネシア大学のキャンパスで開催され、参加者は世界レベルの環境と、文化的・専門的な成長のために設計された協働スペースを利用できます。",
@@ -159,7 +158,7 @@ const ja: Dictionary = {
   faq: {
     eyebrow: "よくある質問",
     title: "よくある質問。",
-    subtitle: "応募前に知っておきたいことすべて。",
+    subtitle: "応募前に知って欲しいこと。",
     items: {
       eligibility: {
         question: "グローバルキャリア・スタータープログラムには誰が参加できますか?",
