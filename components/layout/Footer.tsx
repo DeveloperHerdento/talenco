@@ -130,13 +130,13 @@ export function Footer({ nav, dict, locale }: FooterProps) {
               <li>
                 <a href="mailto:hello@talenco.co" className="flex items-center gap-2 transition-colors hover:text-brand-blue">
                   <Mail size={15} strokeWidth={1.75} className="shrink-0" />
-                  hello@talenco.co
+                  talencoindonesia@gmail.com
                 </a>
               </li>
               <li>
                 <a href="tel:+622156789012" className="flex items-center gap-2 transition-colors hover:text-brand-blue">
-                  <Phone size={15} strokeWidth={1.75} className="shrink-0" />
-                  +62 21 5678 9012
+                  <Phone size={15} strokeWidth={1.75} className="shrink-0" /> 
+                  +62 85 1178 04811 
                 </a>
               </li>
               <li className="flex items-center gap-2">
