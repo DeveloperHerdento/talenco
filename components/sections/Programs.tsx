@@ -19,7 +19,7 @@ export function Programs({ dict }: { dict: Dictionary["programs"] }) {
 
       <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-12 px-4 md:px-8 lg:gap-16">
         <Reveal className="flex flex-col items-center gap-5 text-center">
-          <SectionHeading eyebrow={dict.eyebrow} title={dict.title} align="center" />
+          <SectionHeading eyebrow={dict.eyebrow} align="center" />
         </Reveal>
 
         <Stagger
