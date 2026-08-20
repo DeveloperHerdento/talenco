@@ -15,6 +15,7 @@ type StaggerItemProps = {
   children: ReactNode;
   className?: string;
   duration?: number;
+  id?: string;
 };
 
 export function Stagger({
@@ -42,14 +43,14 @@ export function Stagger({
   );
 }
 
-export function StaggerItem({ children, className, duration = 0.85 }: StaggerItemProps) {
+export function StaggerItem({ children, className, duration = 0.85, id }: StaggerItemProps) {
   const itemVariants: Variants = {
     hidden: { opacity: 0, y: 18 },
     visible: { opacity: 1, y: 0, transition: { duration, ease: [0.16, 1, 0.3, 1] } },
   };
 
   return (
-    <motion.div className={className} variants={itemVariants}>
+    <motion.div id={id} className={className} variants={itemVariants}>
       {children}
     </motion.div>
   );
