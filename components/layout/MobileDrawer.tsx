@@ -1,7 +1,8 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { NAV_LINKS } from "@/lib/constants/nav-links";
+import { NAV_LINKS, resolveNavHref } from "@/lib/constants/nav-links";
+import { REGISTER_FORM_URL } from "@/lib/constants/course-guide";
 import { Button } from "@/components/ui/Button";
 import { LangToggle } from "@/components/layout/LangToggle";
 import type { Dictionary } from "@/lib/i18n/dictionary";
@@ -31,7 +32,7 @@ export function MobileDrawer({ open, onClose, dict, locale }: MobileDrawerProps)
             {NAV_LINKS.map((link, index) => (
               <motion.a
                 key={link.href}
-                href={link.href}
+                href={resolveNavHref(link.href, locale)}
                 onClick={onClose}
                 className="w-full rounded-lg px-3 py-3 text-center text-base font-medium text-black transition-colors hover:bg-black/5"
                 initial={{ opacity: 0, y: -8 }}
@@ -45,9 +46,11 @@ export function MobileDrawer({ open, onClose, dict, locale }: MobileDrawerProps)
 
           <div className="flex flex-row items-center gap-3 px-6 pt-2 pb-6">
             <LangToggle locale={locale} className="w-1/3 justify-center" />
-            <Button variant="primary" href="#programs" onClick={onClose} className="w-2/3 justify-center">
-              {dict.register}
-            </Button>
+            <a href={REGISTER_FORM_URL} target="_blank" rel="noreferrer" className="w-2/3" onClick={onClose}>
+              <Button variant="primary" className="w-full justify-center">
+                {dict.register}
+              </Button>
+            </a>
           </div>
         </motion.div>
       )}
