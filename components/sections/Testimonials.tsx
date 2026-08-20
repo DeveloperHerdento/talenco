@@ -25,7 +25,7 @@ function TestimonialCard({
       <div>
         <p className="text-base font-semibold text-black">{name}</p>
         <p className="text-xs font-light text-brand-blue">{role}</p>
-        <p className="mt-0.5 text-xs font-light text-black/40">{year}</p>
+        <p className="mt-0.5 text-xs font-bold text-black/40">{year}</p>
       </div>
     </div>
   );
