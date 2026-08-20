@@ -35,7 +35,7 @@ export function Footer({ nav, dict, locale }: FooterProps) {
             <div className="flex justify-start">
               <Image src="/assets/logotype-talenco.svg" alt="TalenCo" width={149} height={40} className="h-10 w-auto" />
             </div>
-            <p className="max-w-lg text-sm font-light text-white/50">{dict.tagline}</p>
+            <p className="max-w-md text-sm font-light text-white/50">{dict.tagline}</p>
             <div className="mt-1 flex items-center gap-2.5">
               {SOCIALS.map((social) => (
                 <a
