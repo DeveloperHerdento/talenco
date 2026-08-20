@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Menu, X } from "lucide-react";
-import { useScrolled } from "@/hooks/useScrolled";
-import { NAV_LINKS } from "@/lib/constants/nav-links";
+import { useScrollVisibility } from "@/hooks/useScrolled";
+import { NAV_LINKS, resolveNavHref } from "@/lib/constants/nav-links";
+import { REGISTER_FORM_URL } from "@/lib/constants/course-guide";
+import { NAVBAR_START_MS } from "@/lib/constants/animation";
 import { Button } from "@/components/ui/Button";
 import { FadeUp } from "@/components/ui/FadeUp";
 import { Logo } from "@/components/layout/Logo";
@@ -19,7 +21,7 @@ type NavbarProps = {
 };
 
 export default function Navbar({ dict, locale }: NavbarProps) {
-  const scrolled = useScrolled();
+  const { scrolled, hidden } = useScrollVisibility();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isTransparent = !scrolled && !drawerOpen;
 
@@ -28,32 +30,41 @@ export default function Navbar({ dict, locale }: NavbarProps) {
   const barShadowClass = scrolled && !drawerOpen ? "shadow-lg shadow-black/10" : "";
   const logoFilterClass = isTransparent ? "brightness-0 invert" : "";
   const iconColorClass = isTransparent ? "text-white" : "text-brand-orange";
+  const hideClass = hidden && !drawerOpen ? "-translate-y-[calc(100%+1.5rem)]" : "translate-y-0";
 
   return (
-    <header className={`fixed inset-x-0 top-0 z-50 flex justify-center lg:px-14 lg:pt-12 ${headerPaddingClass}`}>
+    <header
+      className={`fixed inset-x-0 top-0 z-50 flex justify-center transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] lg:px-14 lg:pt-12 ${headerPaddingClass} ${hideClass}`}
+    >
       <div
         className={`relative flex w-full max-w-[1240px] items-center justify-between px-5 py-4 transition-all duration-300 md:px-8 lg:rounded-full lg:py-4 lg:backdrop-blur-md lg:shadow-md lg:shadow-black/5 ${barBgClass} ${barShadowClass}`}
       >
-        <FadeUp className={`transition-[filter] duration-300 lg:filter-none ${logoFilterClass}`} durationMs={500}>
-          <Logo />
+        <FadeUp
+          className={`transition-[filter] duration-300 lg:filter-none ${logoFilterClass}`}
+          delayMs={NAVBAR_START_MS}
+          durationMs={300}
+        >
+          <Logo locale={locale} />
         </FadeUp>
 
         <nav className="hidden items-center gap-8 text-sm text-black lg:flex">
           {NAV_LINKS.map((link, index) => (
-            <FadeUp key={link.href} delayMs={120 + index * 60} durationMs={500}>
-              <a href={link.href} className="transition-colors hover:text-brand-blue">
+            <FadeUp key={link.href} delayMs={NAVBAR_START_MS + 60 + index * 40} durationMs={300}>
+              <a href={resolveNavHref(link.href, locale)} className="transition-colors hover:text-brand-blue">
                 {dict[link.key]}
               </a>
             </FadeUp>
           ))}
         </nav>
 
-        <FadeUp as="div" className="hidden items-center gap-2.5 lg:flex" delayMs={500} durationMs={500}>
+        <FadeUp
+          as="div"
+          className="hidden items-center gap-2.5 lg:flex"
+          delayMs={NAVBAR_START_MS + 250}
+          durationMs={300}
+        >
           <LangToggle locale={locale} />
-          <a
-            href="https://docs.google.com/forms/d/e/1FAIpQLSewS35OEIG1OmTJ-CQwl4RFpSsj-3QwRYJWEObNpvr6mP6h6A/viewform"
-            target="_blank"
-          >
+          <a href={REGISTER_FORM_URL} target="_blank" rel="noreferrer">
             <Button variant="primary">{dict.register}</Button>
           </a>
         </FadeUp>
@@ -63,7 +74,7 @@ export default function Navbar({ dict, locale }: NavbarProps) {
           aria-label={drawerOpen ? dict.closeMenu : dict.openMenu}
           onClick={() => setDrawerOpen((v) => !v)}
           className={`animate-fade-up flex h-10 w-10 items-center justify-center opacity-0 transition-colors duration-300 lg:hidden ${iconColorClass}`}
-          style={{ animationDelay: "120ms", animationDuration: "500ms" }}
+          style={{ animationDelay: `${NAVBAR_START_MS + 60}ms`, animationDuration: "300ms" }}
         >
           <AnimatePresence mode="wait" initial={false}>
             {drawerOpen ? (

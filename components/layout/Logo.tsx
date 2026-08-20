@@ -1,8 +1,9 @@
 import Image from "next/image";
+import type { Locale } from "@/lib/i18n/locales";
 
-export function Logo() {
+export function Logo({ locale }: { locale: Locale }) {
   return (
-    <a href="#top" className="shrink-0">
+    <a href={`/${locale}`} className="shrink-0">
       <Image
         src="/assets/logotype-talenco.svg"
         alt="TalenCo"

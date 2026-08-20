@@ -13,6 +13,7 @@ const en: Dictionary = {
     programs: "Program",
     schedule: "Schedule",
     article: "Article",
+    courseGuide: "Program Guide",
     faq: "FAQ",
     contact: "Contact",
     register: "Register",
@@ -200,13 +201,11 @@ const en: Dictionary = {
   },
   footer: {
     tagline:
-      "The Global Career Starter Program — helping you build practical global skills, real project experience, and a network that lasts.",
+      "TalenCo runs the Global Career Starter Program, giving students practical global skills, real project experience, and a professional network built to last a lifetime.",
     quickLinksHeading: "Quick Links",
-    legalHeading: "Legal",
     contactHeading: "Contact Us",
     privacyPolicy: "Privacy Policy",
-    termsOfService: "Terms of Service",
-    subscriptionAgreement: "Subscription Agreement",
+    termsOfService: "Terms & Conditions",
     lineOfficialAccount: "LINE Official Account @601ffdki",
     lineId: "LINE id: talenco",
     backToTop: "Back to top",
@@ -219,6 +218,148 @@ const en: Dictionary = {
     body: "The page you're looking for doesn't exist or may have moved. Let's get you back on track toward your global career.",
     ctaPrimary: "Back to Home",
     ctaSecondary: "Explore Programs",
+  },
+  course: {
+    hero: {
+      title: "Global Career Starter Program",
+      meta: "Updated: 05 August 2026",
+    },
+    dayCardLabels: {
+      objectives: "Learning Objectives",
+      outcomes: "Learning Outcomes",
+      materials: "Materials",
+      output: "Output",
+      groupTask: "Group Task",
+    },
+    overview: {
+      heading: "Overview",
+      subtitle: "Who TalenCo is, what we stand for, and what the Global Career Starter Program is all about.",
+      section1Title: "Welcome Note",
+      welcome1:
+        "We believe that every individual has the potential to grow, contribute, and thrive when given the right opportunities and environment. At TalenCo, we are committed to providing impactful programs that not only enhance skills but also foster cross-cultural understanding and real-world readiness.",
+      welcome2:
+        "Our first program is designed to welcome participants from Japan to Indonesia, offering immersive learning experiences in English, Bahasa Indonesia for Foreign Speakers (BIPA), and Digital Marketing.",
+      section2Title: "About TalenCo & Our Vision",
+      about1:
+        "TalenCo is a talent development initiative dedicated to empowering talents through meaningful learning experiences that bridge skills, cultures, and global opportunities. Starting with international programs for Japanese participants in Indonesia, TalenCo offers immersive courses in English, BIPA, and Digital Marketing.",
+      visionLabel: "Vision",
+      visionText:
+        "To become a leading platform in empowering talents by providing accessible, impactful, and globally relevant learning experiences.",
+      points: [
+        "Empower individuals with practical and globally relevant skills",
+        "Facilitate cross-cultural learning and international collaboration",
+        "Provide high-quality training programs tailored to market needs",
+        "Expand program offerings across various fields and industries",
+        "Build a strong ecosystem connecting talents, educators, and industry partners",
+      ],
+      section3Title: "What Is the Global Career Starter Program?",
+      whatIs:
+        "An immersive short-term program designed to equip participants with practical language skills, cross-cultural understanding, and fundamental knowledge in digital marketing. Delivered in association with LBI FIB Universitas Indonesia, the language courses are combined with hands-on digital marketing experience — participants apply their learning through real-world projects, preparing them for global career opportunities.",
+    },
+    schemes: {
+      heading: "Program Schemes",
+      subtitle: "The Global Career Starter Program is available in two schemes.",
+      scheme1Badge: "Scheme 1 — Online",
+      scheme1Title: "September 2026 · Summer Break Window",
+      scheme1Desc:
+        "A fully online two-week learning experience delivered through TalenCo's Learning Management System (LMS), supported by interactive sessions and collaborative activities — no travel to Indonesia required.",
+      scheme2Badge: "Scheme 2 — On-Site",
+      scheme2Title: "December 2026 · Winter Break Window",
+      scheme2Desc:
+        "A two-week immersive experience at Universitas Indonesia, Depok Campus — including accommodation, round-trip airport transfer, on-site coordination, and the Indonesia Culture Class.",
+      programFeeLabel: "Program Fee",
+      scheme1Note: "per participant · cohorts of 16–28",
+      scheme2Note: "per participant · cohorts of 12–24",
+      onsitePeriodTitle: "On-Site Program Period",
+      addOnTitle: "Add-On Fee (Optional, On-Site Only)",
+      milestoneHeader: "Milestone",
+      dateHeader: "Date",
+      componentHeader: "Component",
+      priceHeader: "Price",
+      includedTitle: "What's Included",
+      notIncludedTitle: "Not Included",
+    },
+    schedule: {
+      heading: "Program Schedule",
+      subtitle:
+        "A 2-week structured schedule combining classroom sessions, interactive activities, and group projects. Daily agenda: 09:00–11:00 BIPA · 11:00–14:00 English · 14:00–15:00 Digital Marketing · 15:00–16:00 Group Task · 16:00–17:00 Catch-Up Meeting.",
+      headers: ["Day", "Main Topic", "BIPA", "English", "Digital Marketing", "Group Task", "Catch-Up"],
+      weekendTrip: "Day 6–7 · Weekend Trip (Add-On)",
+      weekendReturn: "Day 13–14 · Weekend — Return to Japan",
+    },
+    registration: {
+      heading: "How to Register",
+      subtitle: "Follow these steps to secure your spot, plus the terms that apply once you register.",
+      sectionTitle: "Registration Steps",
+      steps: [
+        "Fill in the registration form (basic information, background, English level, and motivation).",
+        "Proceed with payment to secure your spot.",
+        "Join the official communication group for further updates.",
+        "Complete the visa application form and upload all required documents.",
+        "Receive confirmation and prepare for departure.",
+      ],
+      registrationFormBtn: "Registration Form",
+      visaFormBtn: "Visa Application Form",
+      termsSectionTitle: "Terms & Conditions",
+      termsItem1: "Registration is confirmed only after full payment is received.",
+      termsItem2: "Participants must comply with program rules and schedule.",
+      termsItem3:
+        "Participants who have completed payment are required to fill in the visa application form. Failure to submit required documents by the deadline may result in forfeiture of the program fee.",
+      refundPrefix: "Refund or cancellation is allowed up to 30 days (H-30) before the program start date. See our",
+      termsLinkLabel: "Terms & Conditions",
+      refundSuffix: "for the full refund schedule.",
+      termsItem5: "The organizer reserves the right to make adjustments to the program if necessary.",
+    },
+    curriculum: {
+      heading: "Courses Curriculum & Details",
+      subtitle: "A day-by-day breakdown of every course in the program — objectives, materials, and outcomes.",
+      businessEnglish: {
+        alt: "Business English course",
+        title: "Business English",
+        paragraph:
+          "This course brings participants through the skills needed to succeed in business — spoken and written communication from meetings and negotiations to presentations, as well as business correspondence such as emails, memos, and meeting minutes.",
+        bullets: [
+          "Prepare and deliver effective presentations in business situations",
+          "Communicate confidently in meetings and negotiations",
+          "Use the elements of different genres of business correspondence",
+        ],
+        tableHeaders: ["Session", "Duration", "Learning Objectives"],
+      },
+      bipa: {
+        alt: "BIPA Daily Conversation course",
+        title: "Daily Conversation BIPA (BIPA Sehari-hari)",
+        paragraph:
+          "A short in-person course giving basic competence to use Bahasa Indonesia in everyday life, emphasizing spoken communication for daily conversations and expressing needs at work. In-person classes immerse students in Indonesian culture and language through simulated situations and authentic visual aids designed for beginners.",
+        footnote:
+          "Designed based on the BIPA UI Curriculum, aligned with the national standard competencies of BIPA learners (SKL BIPA: Permendikbud No 27 Year 2017).",
+        tableHeaders: ["Session", "Unit & Topic", "Learning Objectives"],
+      },
+      digitalMarketing: {
+        alt: "Digital Marketing course",
+        title: "Digital Marketing Course",
+        paragraph:
+          "An intensive course equipping participants with a solid foundation in marketing management and branding before diving into digital tactics — through hands-on real-world project simulations, from marketing & branding analysis to consumer insight and integrated content strategy. Participants finish with a comprehensive digital marketing strategy portfolio.",
+      },
+      careerPrep: {
+        alt: "Career Preparation course",
+        title: "Career Preparation Course",
+        paragraph:
+          "Equips participants with essential skills to transition from academic learning into a professional global workplace — cross-cultural communication in Japanese and international business contexts, plus career readiness: personal branding, CV/LinkedIn optimization, interview preparation, and job hunting strategies.",
+        individualChallengeTitle: "Individual Challenge",
+      },
+      culture: {
+        alt: "Indonesia Culture Class",
+        title: "Indonesia Culture Class",
+        paragraph:
+          "A cultural session aimed at enriching students' experiences through hands-on activity — including Javanese gamelan musical instrument practice. Conducted on-site at the Faculty of Humanities, Universitas Indonesia, Depok Campus, led by experienced Indonesian language teachers, and designed to be interactive and engaging.",
+      },
+    },
+    contact: {
+      heading: "Questions about the program?",
+      infoLine: "Our team is ready to help on LINE or WhatsApp — reach out any time and we'll get back to you shortly.",
+      chatButton: "Chat on WhatsApp",
+      lineButton: "Chat on LINE",
+    },
   },
 };
 
