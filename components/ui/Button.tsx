@@ -3,9 +3,11 @@
 import { ButtonHTMLAttributes, CSSProperties, MouseEvent, ReactNode, useRef, useState } from "react";
 
 type Variant = "primary" | "secondary" | "outline" | "outlineLight";
+type Size = "md" | "lg";
 
 type BaseProps = {
   variant?: Variant;
+  size?: Size;
   icon?: ReactNode;
   children: ReactNode;
   className?: string;
@@ -34,6 +36,11 @@ const HOVER_TEXT_CLASSES: Record<Variant, string> = {
   outlineLight: "group-hover:text-white",
 };
 
+const SIZE_CLASSES: Record<Size, string> = {
+  md: "h-10 px-[18px] py-3 text-sm rounded-[20px]",
+  lg: "h-12 px-6 py-3.5 text-base md:h-14 md:px-8 rounded-full",
+};
+
 type ConflictingHandlers =
   | "onDrag"
   | "onDragStart"
@@ -49,6 +56,7 @@ type ButtonProps = BaseProps &
 
 export function Button({
   variant = "primary",
+  size = "md",
   icon,
   children,
   className = "",
@@ -80,7 +88,7 @@ export function Button({
     setHovered(false);
   };
 
-  const classes = `group relative isolate inline-flex items-center gap-2.5 overflow-hidden h-10 px-[18px] py-3 rounded-[20px] text-sm font-semibold whitespace-nowrap cursor-pointer ${VARIANT_CLASSES[variant]} ${className}`;
+  const classes = `group relative isolate inline-flex items-center gap-2.5 overflow-hidden font-semibold whitespace-nowrap cursor-pointer ${SIZE_CLASSES[size]} ${VARIANT_CLASSES[variant]} ${className}`;
 
   const content = (
     <>
