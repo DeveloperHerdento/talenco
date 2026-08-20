@@ -24,7 +24,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
     <>
       <main className="flex min-h-screen flex-col items-center bg-white">
         <Navbar dict={dict.nav} locale={lang} />
-        <Hero dict={dict.hero} />
+        <Hero dict={dict.hero} locale={lang} />
         <About dict={dict.about} />
         <Participants dict={dict.participants} />
 
