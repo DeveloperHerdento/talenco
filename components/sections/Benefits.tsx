@@ -6,7 +6,7 @@ import type { Dictionary } from "@/lib/i18n/dictionary";
 
 export function Benefits({ dict }: { dict: Dictionary["benefits"] }) {
   return (
-    <section id="benefits" className="w-full py-14 md:py-18 lg:py-20">
+    <section id="benefits" className="w-full pb-14 md:pb-18 lg:pb-20">
       <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-12 px-4 md:gap-16 md:px-8">
         <Reveal className="flex flex-col items-center gap-5 text-center">
           <SectionHeading eyebrow={dict.eyebrow} title={dict.title} align="center" />
