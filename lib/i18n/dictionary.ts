@@ -198,4 +198,103 @@ export type Dictionary = {
       lineButton: string;
     };
   };
+  legal: {
+    terms: {
+      metaTitle: string;
+      metaDescription: string;
+      title: string;
+      lastUpdated: string;
+      banner: string;
+      nav: {
+        generalProvisions: string;
+        overview: string;
+        registration: string;
+        accountSecurity: string;
+        payment: string;
+        thirdParty: string;
+        miscellaneous: string;
+        contact: string;
+      };
+      definitions: {
+        hgsTerm: string;
+        hgsDesc: string;
+        hgsServicesTerm: string;
+        hgsServicesDesc: string;
+        talencoTerm: string;
+        talencoDesc: string;
+        userTerm: string;
+        userDesc: string;
+        affiliateTerm: string;
+        affiliateDesc: string;
+      };
+      section1: { title: string; intro: string };
+      section2: { title: string; intro: string; bullet1: string; bullet2: string; bullet3: string };
+      section3: {
+        title: string;
+        item1: string;
+        item2: string;
+        item3: string;
+        privacyPrefix: string;
+        privacyLinkLabel: string;
+        privacySuffix: string;
+      };
+      section4: {
+        title: string;
+        accountSecurityLabel: string;
+        accountSecurityText: string;
+        dataAccuracyLabel: string;
+        dataAccuracyText: string;
+        cyberLabel: string;
+        cyberText: string;
+      };
+      section5: {
+        title: string;
+        intro: string;
+        bankingLabel: string;
+        bankingText: string;
+        liabilityLabel: string;
+        liabilityText: string;
+        finalLabel: string;
+        finalText: string;
+      };
+      section6: { title: string; text1: string; text2: string };
+      section7: {
+        title: string;
+        item1: string;
+        item2: string;
+        item3: string;
+        item4: string;
+        item5: string;
+        item6: string;
+      };
+      section8: { title: string; text: string };
+    };
+    privacy: {
+      metaTitle: string;
+      metaDescription: string;
+      title: string;
+      lastUpdated: string;
+      nav: {
+        collection: string;
+        disclosure: string;
+        retention: string;
+        rights: string;
+        withdrawal: string;
+        contact: string;
+      };
+      thirdParties: {
+        institutionalTerm: string;
+        institutionalDesc: string;
+        governmentTerm: string;
+        governmentDesc: string;
+      };
+      rights: { item1: string; item2: string; item3: string };
+      section1: { title: string; text1: string; text2: string };
+      section2: { title: string; intro: string };
+      section3: { title: string; text1: string; text2: string };
+      section4: { title: string; intro: string; footnote: string };
+      section5: { title: string; text: string };
+      section6: { title: string; text: string };
+    };
+  };
 };
