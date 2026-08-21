@@ -361,6 +361,180 @@ const en: Dictionary = {
       lineButton: "Chat on LINE",
     },
   },
+  legal: {
+    terms: {
+      metaTitle: "Terms & Conditions - TalenCo",
+      metaDescription: "Terms and conditions governing the use of TalenCo's digital platform and services.",
+      title: "Terms & Conditions",
+      lastUpdated: "Last updated: 29 June 2026",
+      banner:
+        "These Terms and Conditions strictly govern the use of the TalenCo platform and digital services only. Technical operational details, academic curricula, physical facility coverage, and specific program prerequisites (including On-Site activities) are separately governed by an Activity Implementation Agreement or service offering document issued for each program.",
+      nav: {
+        generalProvisions: "General Provisions",
+        overview: "Overview",
+        registration: "Registration",
+        accountSecurity: "Account Security",
+        payment: "Payment Gateway",
+        thirdParty: "Third-Party & Media",
+        miscellaneous: "Miscellaneous",
+        contact: "Contact",
+      },
+      definitions: {
+        hgsTerm: "HGS",
+        hgsDesc: "PT Herdento Global Solusi, the principal legal entity owning and operating the services.",
+        hgsServicesTerm: "HGS Services",
+        hgsServicesDesc:
+          "All products, digital platforms (including TalenCo), career consultation services (such as GCSP), educational programs, and other integrated systems developed, managed, and operated under PT Herdento Global Solusi.",
+        talencoTerm: "TalenCo",
+        talencoDesc:
+          "The digital education service platform and ecosystem wholly owned, managed, and operated by HGS. References to “TalenCo” relating to releases of liability, licenses, or absolute rights are legally binding and directly protect its parent entity, PT Herdento Global Solusi.",
+        userTerm: "User",
+        userDesc:
+          "Any individual, whether an Indonesian Citizen (WNI) or Foreign Citizen (WNA), who registers, creates an account, accesses, or conducts transactions on the TalenCo platform or other HGS Services.",
+        affiliateTerm: "Affiliate Partner / Third Party",
+        affiliateDesc:
+          "External entities, academic institutions, government agencies, or technology vendors (including payment gateways) lawfully integrated with and cooperating with HGS in providing the Services.",
+      },
+      section1: {
+        title: "General Provisions",
+        intro: "In these Terms and Conditions, the following terms have the meanings set out below.",
+      },
+      section2: {
+        title: "Overview of the TalenCo Ecosystem Services",
+        intro:
+          "The TalenCo ecosystem facilitates international education programs, career development, consulting, and other supporting services. Through this ecosystem, Users may:",
+        bullet1: "Register for and participate in various programs, classes, or consulting services offered;",
+        bullet2:
+          "Access curricula, learning materials, or mentoring sessions through the Learning Management System (LMS) or other communication platforms; and/or",
+        bullet3: "Make payment transactions to secure a spot in certain services or events.",
+      },
+      section3: {
+        title: "User Registration and Data Accuracy",
+        item1:
+          "The User must independently complete the registration form and provide accurate, complete, and up-to-date information, including basic information, background, English proficiency level, and motivation.",
+        item2:
+          "By clicking \"Agree\" or submitting registration data, the User grants TalenCo permission to collect, process, store, and use such data for academic profile evaluation, administrative communication, and transfer to relevant third parties for immigration and academic verification purposes.",
+        item3: "Failure to provide accurate data may result in disqualification from program participation.",
+        privacyPrefix:
+          "Collection, use, disclosure, and protection of the User's personal and sensitive data (including documents used for visa applications) are fully governed by our",
+        privacyLinkLabel: "Privacy Policy",
+        privacySuffix: ". By submitting the registration form, the User is deemed to have read and agreed to it.",
+      },
+      section4: {
+        title: "Account Security & Limitation of Data Liability",
+        accountSecurityLabel: "Account Security Responsibility",
+        accountSecurityText:
+          "The User is solely responsible for maintaining the confidentiality of their account credentials. All activities conducted under the User's account are legally deemed authorized actions of the User. TalenCo is released from any losses arising from the User's negligence in securing their device or account (including hacking or phishing incidents).",
+        dataAccuracyLabel: "Guarantee of Data Accuracy and Validity",
+        dataAccuracyText:
+          "The User warrants that all data, identification documents, medical certificates, and financial data submitted are accurate, valid, unexpired, and not falsified. If discrepancy, falsification, or legal implication (such as visa rejection) is discovered, TalenCo has the right to unilaterally terminate the services without refund of the program fee.",
+        cyberLabel: "Cyber Protection Measures",
+        cyberText:
+          "TalenCo implements reasonable industry-standard security measures. To the extent permitted by law, TalenCo is not liable for data breaches or damage caused by third-party cyber-attacks, advanced hacking, or system failures beyond its reasonable control (digital Force Majeure).",
+      },
+      section5: {
+        title: "Transactions and Payment Gateway",
+        intro:
+          "Payments are processed through official third-party Payment Gateway providers designated by TalenCo (such as Xendit or other affiliated partners). Payment of service fees, in full or by installment, is subject to the policies determined by TalenCo for each program.",
+        bankingLabel: "Banking Data Security",
+        bankingText:
+          "TalenCo does not directly process, store, or manage the User's sensitive banking data (card numbers, CVV, or PIN). Financial data processing is subject to the security standards and policies of the relevant Payment Gateway partner.",
+        liabilityLabel: "Limitation of Liability",
+        liabilityText:
+          "TalenCo is released from obligations or claims arising from issues beyond its reasonable control, including transaction failures, double charges, settlement delays, downtime, or data breaches within the Payment Gateway partner's system.",
+        finalLabel: "Final Contract Details",
+        finalText:
+          "These Terms exclusively govern the use of digital facilities. Service fees, cost exclusions, payment deadlines, and the Refund Policy are separately regulated in the Activity Implementation Agreement or official Invoice.",
+      },
+      section6: {
+        title: "Third-Party Services & Media Release",
+        text1:
+          "TalenCo services may be integrated with Third Parties, including academic curriculum providers, testing facilities, consulting services, technology vendors, and immigration document verification providers. TalenCo is not responsible for technical issues or policies specific to such Third Party's systems.",
+        text2:
+          "For documentation, portfolio, and promotional purposes, the User grants TalenCo a non-exclusive, royalty-free, and perpetual right to take, record, store, and publish visual documentation (photos/videos) containing the User's face, voice, or activities while using the Services, and waives the right to demand take-down, except where publication violates public decency norms under Indonesian law.",
+      },
+      section7: {
+        title: "Miscellaneous",
+        item1:
+          "Notices, invoices, consents, and disclosures sent electronically via the User's registered email or official communication channels satisfy all legal requirements for valid written communication.",
+        item2:
+          "TalenCo reserves the right to update these Terms at any time without prior notice. Continuing payment and not withdrawing from the program after changes are published constitutes acceptance.",
+        item3:
+          "These Terms are exclusively governed by the laws of the Republic of Indonesia. Foreign Citizen (WNA) Users expressly waive jurisdiction in their country of origin; unresolved disputes are submitted exclusively to the Central Jakarta District Court.",
+        item4:
+          "In case of conflict with a physical contract signed by the User (such as an Activity Implementation Agreement), the physical contract prevails to the extent of the conflict.",
+        item5:
+          "The User represents that they are at least 18 years old or have reached the age of majority in their country of origin. Users below this age must obtain written consent from a parent or lawful guardian.",
+        item6:
+          "If any provision of these Terms is declared invalid or unenforceable, the remaining provisions remain valid and unaffected.",
+      },
+      section8: {
+        title: "Contact",
+        text: "For questions about these Terms or other inquiries, please contact us via:",
+      },
+    },
+    privacy: {
+      metaTitle: "Privacy Policy - TalenCo",
+      metaDescription: "How TalenCo collects, uses, and protects your personal information.",
+      title: "Privacy Policy",
+      lastUpdated: "Last updated: 29 June 2026",
+      nav: {
+        collection: "Data Collection",
+        disclosure: "Third-Party Disclosure",
+        retention: "Retention & Destruction",
+        rights: "Data Subject Rights",
+        withdrawal: "Data Withdrawal",
+        contact: "Contact",
+      },
+      thirdParties: {
+        institutionalTerm: "Institutional & Academic Partners",
+        institutionalDesc:
+          "Universities, certification bodies, or affiliated consultants that directly facilitate the User's curriculum and program operations. Data sharing is limited to information relevant to academic needs.",
+        governmentTerm: "Government & Legal Authorities",
+        governmentDesc:
+          "Ministries, embassies, or Immigration Authorities, where submission of identification and financial documents is mandatory for residence permits or visa eligibility. TalenCo is released from liability for further data management after lawful submission.",
+      },
+      rights: {
+        item1: "Request access to or copies of administrative personal data stored in the TalenCo system;",
+        item2: "Request updates or rectification of data proven to be inaccurate; and",
+        item3:
+          "Request deletion of data or withdraw communication consent (opt-out/unsubscribe) from marketing channels and official community groups.",
+      },
+      section1: {
+        title: "Collection and Management of Sensitive Data",
+        text1:
+          "When a User registers for TalenCo Services that require physical mobility, cross-border travel, or face-to-face programs, relevant legal authorities require TalenCo to collect data classified as Sensitive Personal Data — including copies of immigration documents (passport, visa), medical records (health certificate, health insurance), and private financial data (financial guarantee certificate, bank account statements).",
+        text2:
+          "TalenCo guarantees that Sensitive Data is processed solely for legal compliance, visa requirements, and smooth logistical operations, and is never exploited, sold, or disclosed for commercial or marketing purposes.",
+      },
+      section2: {
+        title: "Transparency and Third-Party Disclosure",
+        intro:
+          "To provide the Services and comply with applicable regulations, the User expressly consents to TalenCo sharing personal data, on a limited basis, with the following third parties:",
+      },
+      section3: {
+        title: "Data Retention and Destruction Policy",
+        text1:
+          "TalenCo strictly implements the principle of data minimization. Sensitive Data relating to immigration, financial, and medical requirements is retained only during the critical period of permit processing and for the duration of the physical Service.",
+        text2:
+          "Immediately after the User completes the program and/or is confirmed to have safely returned to their country of origin, all copies of such Sensitive Data are deleted and permanently destroyed (secure wiping). Basic administrative data (such as name and program completion history) may be retained longer solely for certificate issuance, alumni records, and future academic verification.",
+      },
+      section4: {
+        title: "Data Subject Rights",
+        intro: "Subject to applicable data protection laws, the User, as a data subject, has the legal right to:",
+        footnote:
+          "All requests to exercise these rights must be submitted in writing through TalenCo's official communication channels and are processed within a reasonable period in accordance with applicable law.",
+      },
+      section5: {
+        title: "Exception Clause Regarding Data Withdrawal",
+        text: "The User's right to request data deletion is expressly limited while the service process is ongoing. If the User withdraws consent or demands deletion of Sensitive Data (such as passport or financial data) while the immigration permit application or physical program is ongoing, such action is legally classified as unilateral cancellation and voluntary withdrawal. TalenCo then has the absolute right to automatically terminate the Services, cancel immigration sponsorship, and all program fees paid shall be deemed fully forfeited and strictly non-refundable.",
+      },
+      section6: {
+        title: "Contact",
+        text: "For privacy inquiries, data access, or deletion requests, please contact us via:",
+      },
+    },
+  },
 };
 
 export default en;

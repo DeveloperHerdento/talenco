@@ -24,10 +24,10 @@ export function DocHero({ title, meta, image = "/assets/images/about-img-1.webp"
       </div>
 
       <div className="relative z-10 mx-auto w-full max-w-[1240px] px-4 md:px-8">
-        <div className="flex w-full flex-col gap-2">
+        <div className="flex w-full flex-col items-center gap-3 text-center">
           <FadeUp
             as="span"
-            className="block text-[clamp(1.25rem,5vw,3rem)] leading-tight font-extrabold whitespace-nowrap text-white"
+            className="text-white block text-6xl leading-tight font-extrabold sm:text-5xl md:text-6xl lg:text-7xl"
             delayMs={NAVBAR_ANIMATION_END_MS + 150}
             durationMs={800}
           >
