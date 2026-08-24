@@ -23,9 +23,6 @@ export async function generateMetadata({
   params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
   const { lang: rawLang } = await params;
-  // Invalid locale segments 404 via page.tsx's notFound() call, not here — throwing
-  // notFound() in the root layout (the one that renders <html>/<body>) would leave
-  // not-found.tsx without a document shell to render into. Metadata just falls back.
   const lang = isLocale(rawLang) ? rawLang : DEFAULT_LOCALE;
 
   const dict = await getDictionary(lang);
@@ -59,6 +56,9 @@ export async function generateMetadata({
       description,
       images: ["/assets/images/hero-bg.webp"],
     },
+    verification: {
+      google: "google-site-verification=w3MLa0GXlwUTaLSp-470rhH2PRZTpdIFRwLe8H8lN1o"
+    }
   };
 }
 

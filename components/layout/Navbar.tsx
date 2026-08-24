@@ -50,8 +50,12 @@ export default function Navbar({ dict, locale }: NavbarProps) {
         <nav className="hidden items-center gap-8 text-sm text-black lg:flex">
           {NAV_LINKS.map((link, index) => (
             <FadeUp key={link.href} delayMs={NAVBAR_START_MS + 60 + index * 40} durationMs={300}>
-              <a href={resolveNavHref(link.href, locale)} className="transition-colors hover:text-brand-blue">
+              <a
+                href={resolveNavHref(link.href, locale)}
+                className="group relative py-1 transition-colors hover:text-brand-blue"
+              >
                 {dict[link.key]}
+                <span className="bg-brand-blue absolute inset-x-0 -bottom-0.5 h-px origin-center scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100" />
               </a>
             </FadeUp>
           ))}
