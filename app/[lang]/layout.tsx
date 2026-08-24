@@ -57,7 +57,7 @@ export async function generateMetadata({
       images: ["/assets/images/hero-bg.webp"],
     },
     verification: {
-      google: "google-site-verification=w3MLa0GXlwUTaLSp-470rhH2PRZTpdIFRwLe8H8lN1o"
+      google: "w3MLa0GXlwUTaLSp-470rhH2PRZTpdIFRwLe8H8lN1o"
     }
   };
 }
