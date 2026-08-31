@@ -366,7 +366,7 @@ const en: Dictionary = {
       metaTitle: "Terms & Conditions - TalenCo",
       metaDescription: "Terms and conditions governing the use of TalenCo's digital platform and services.",
       title: "Terms & Conditions",
-      lastUpdated: "Last updated: 29 June 2026",
+      lastUpdated: "Last updated: 31 August 2026",
       banner:
         "These Terms and Conditions strictly govern the use of the TalenCo platform and digital services only. Technical operational details, academic curricula, physical facility coverage, and specific program prerequisites (including On-Site activities) are separately governed by an Activity Implementation Agreement or service offering document issued for each program.",
       nav: {
@@ -394,6 +394,9 @@ const en: Dictionary = {
         affiliateTerm: "Affiliate Partner / Third Party",
         affiliateDesc:
           "External entities, academic institutions, government agencies, or technology vendors (including payment gateways) lawfully integrated with and cooperating with HGS in providing the Services.",
+        tncTerm: "TNC",
+        tncDesc:
+          "The acronym for Terms and Conditions, collectively referring to the entire Terms of Service document for the TalenCo platform ecosystem managed and operated by PT Herdento Global Solusi (HGS), together with the Privacy Policy and all accompanying operational guidelines.",
       },
       section1: {
         title: "General Provisions",
@@ -413,7 +416,7 @@ const en: Dictionary = {
         item1:
           "The User must independently complete the registration form and provide accurate, complete, and up-to-date information, including basic information, background, English proficiency level, and motivation.",
         item2:
-          "By clicking \"Agree\" or submitting registration data, the User grants TalenCo permission to collect, process, store, and use such data for academic profile evaluation, administrative communication, and transfer to relevant third parties for immigration and academic verification purposes.",
+          "By clicking \"Agree\" or submitting registration data, the User grants TalenCo permission to collect, process, store, and use such data for academic profile evaluation, administrative communication via email or official electronic communication channels, and transfer to third parties for immigration and academic verification purposes.",
         item3: "Failure to provide accurate data may result in disqualification from program participation.",
         privacyPrefix:
           "Collection, use, disclosure, and protection of the User's personal and sensitive data (including documents used for visa applications) are fully governed by our",
@@ -460,7 +463,7 @@ const en: Dictionary = {
         item2:
           "TalenCo reserves the right to update these Terms at any time without prior notice. Continuing payment and not withdrawing from the program after changes are published constitutes acceptance.",
         item3:
-          "These Terms are exclusively governed by the laws of the Republic of Indonesia. Foreign Citizen (WNA) Users expressly waive jurisdiction in their country of origin; unresolved disputes are submitted exclusively to the Central Jakarta District Court.",
+          "These Terms, together with all activities arising from the TalenCo Services, are strictly governed by the laws of the Republic of Indonesia. Given that the majority of Users are foreign nationals, Users expressly waive any right to jurisdiction in their country of origin or citizenship. If amicable negotiation fails, the Parties agree to submit disputes exclusively to the Central Jakarta District Court.",
         item4:
           "In case of conflict with a physical contract signed by the User (such as an Activity Implementation Agreement), the physical contract prevails to the extent of the conflict.",
         item5:
@@ -477,7 +480,7 @@ const en: Dictionary = {
       metaTitle: "Privacy Policy - TalenCo",
       metaDescription: "How TalenCo collects, uses, and protects your personal information.",
       title: "Privacy Policy",
-      lastUpdated: "Last updated: 29 June 2026",
+      lastUpdated: "Last updated: 31 August 2026",
       nav: {
         collection: "Data Collection",
         disclosure: "Third-Party Disclosure",
@@ -495,7 +498,7 @@ const en: Dictionary = {
           "Ministries, embassies, or Immigration Authorities, where submission of identification and financial documents is mandatory for residence permits or visa eligibility. TalenCo is released from liability for further data management after lawful submission.",
       },
       rights: {
-        item1: "Request access to or copies of administrative personal data stored in the TalenCo system;",
+        item1: "Request access to or copies of their personal data stored in the TalenCo system;",
         item2: "Request updates or rectification of data proven to be inaccurate; and",
         item3:
           "Request deletion of data or withdraw communication consent (opt-out/unsubscribe) from marketing channels and official community groups.",
