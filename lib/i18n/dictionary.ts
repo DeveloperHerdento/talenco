@@ -226,6 +226,8 @@ export type Dictionary = {
         userDesc: string;
         affiliateTerm: string;
         affiliateDesc: string;
+        tncTerm: string;
+        tncDesc: string;
       };
       section1: { title: string; intro: string };
       section2: { title: string; intro: string; bullet1: string; bullet2: string; bullet3: string };
