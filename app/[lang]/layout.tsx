@@ -83,9 +83,9 @@ export default async function RootLayout({
     url: `${SITE_URL}/${lang}`,
     logo: `${SITE_URL}/assets/logo-talenco.svg`,
     sameAs: [
-      "https://instagram.com/talenco",
-      "https://linkedin.com/company/talenco",
-      "https://tiktok.com/@talenco",
+      "https://instagram.com/talencoid",
+      "https://facebook.com/talencoindonesia",
+      "https://tiktok.com/@talencoid",
     ],
   };
 
