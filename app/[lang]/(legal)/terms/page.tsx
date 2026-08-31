@@ -32,6 +32,7 @@ export default async function TermsPage({ params }: { params: Promise<{ lang: st
     [t.definitions.talencoTerm, t.definitions.talencoDesc],
     [t.definitions.userTerm, t.definitions.userDesc],
     [t.definitions.affiliateTerm, t.definitions.affiliateDesc],
+    [t.definitions.tncTerm, t.definitions.tncDesc],
   ];
 
   const TERMS_NAV = [
