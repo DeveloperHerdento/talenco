@@ -18,12 +18,12 @@ export async function CourseContact({ locale }: { locale: Locale }) {
         </div>
         <div className="flex flex-wrap gap-3">
           <a href="https://lin.ee/EQaovqv" target="_blank" rel="noreferrer">
-            <Button variant="outline" icon={<FontAwesomeIcon icon={faLine} className="size-4" aria-hidden="true" />}>
+            <Button variant="line" icon={<FontAwesomeIcon icon={faLine} className="size-4" aria-hidden="true" />}>
               {t.lineButton}
             </Button>
           </a>
           <a href="https://wa.me/+6285117804811" target="_blank" rel="noreferrer">
-            <Button variant="secondary">{t.chatButton}</Button>
+            <Button variant="whatsapp">{t.chatButton}</Button>
           </a>
         </div>
       </Reveal>

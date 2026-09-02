@@ -2,7 +2,6 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { NAV_LINKS, resolveNavHref } from "@/lib/constants/nav-links";
-import { REGISTER_FORM_URL } from "@/lib/constants/course-guide";
 import { Button } from "@/components/ui/Button";
 import { LangToggle } from "@/components/layout/LangToggle";
 import type { Dictionary } from "@/lib/i18n/dictionary";
@@ -46,7 +45,7 @@ export function MobileDrawer({ open, onClose, dict, locale }: MobileDrawerProps)
 
           <div className="flex flex-row items-center gap-3 px-6 pt-2 pb-6">
             <LangToggle locale={locale} className="w-1/3 justify-center" />
-            <a href={REGISTER_FORM_URL} target="_blank" rel="noreferrer" className="w-2/3" onClick={onClose}>
+            <a href={`/${locale}/register`} className="w-2/3" onClick={onClose}>
               <Button variant="primary" className="w-full justify-center">
                 {dict.register}
               </Button>

@@ -1,7 +1,5 @@
 import type { Locale } from "@/lib/i18n/locales";
 
-export const REGISTER_FORM_URL =
-  "https://docs.google.com/forms/d/e/1FAIpQLSewS35OEIG1OmTJ-CQwl4RFpSsj-3QwRYJWEObNpvr6mP6h6A/viewform";
 export const VISA_FORM_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLScbgZ88JIS6rh5Y5lbKed1TndLx8gqBQIuJAkFniCo_sh_GTw/viewform";
 
