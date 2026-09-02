@@ -382,9 +382,10 @@ export function RegisterForm({ locale }: { locale: string }) {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [registration, setRegistration] = useState<{ id: string; accessToken: string } | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
   const [paid, setPaid] = useState(false);
 
+  const formTopRef = useRef<HTMLDivElement>(null);
   const honeypotRef = useRef("");
   const turnstileTokenRef = useRef("");
   const turnstileContainerRef = useRef<HTMLDivElement>(null);
@@ -404,8 +405,16 @@ export function RegisterForm({ locale }: { locale: string }) {
   };
 
   // Render the Turnstile widget once the script has loaded and step 4 is mounted.
+  //
+  // Step 4's content lives inside AnimatePresence's <motion.div key={step}> — leaving and
+  // returning to step 4 fully unmounts and remounts that subtree, so turnstileContainerRef
+  // points at a brand-new DOM node each time. widgetIdRef must be reset (and the old widget
+  // torn down) on every effect cleanup, or the "already rendered" guard below skips
+  // rendering into the new container and the widget just never reappears.
   useEffect(() => {
     if (step !== 3) return;
+
+    let cancelled = false;
 
     function render() {
       const win = window as Window & {
@@ -413,7 +422,7 @@ export function RegisterForm({ locale }: { locale: string }) {
           render: (el: HTMLElement, opts: Record<string, unknown>) => string;
         };
       };
-      if (!turnstileContainerRef.current || !win.turnstile || widgetIdRef.current !== null) return;
+      if (cancelled || !turnstileContainerRef.current || !win.turnstile || widgetIdRef.current !== null) return;
       if (!TURNSTILE_SITE_KEY) return;
 
       widgetIdRef.current = win.turnstile.render(turnstileContainerRef.current, {
@@ -433,6 +442,16 @@ export function RegisterForm({ locale }: { locale: string }) {
     } else {
       w.__onTurnstileReady = render;
     }
+
+    return () => {
+      cancelled = true;
+      const win = window as Window & { turnstile?: { remove: (id: string) => void } };
+      if (widgetIdRef.current !== null) {
+        win.turnstile?.remove(widgetIdRef.current);
+      }
+      widgetIdRef.current = null;
+      turnstileTokenRef.current = "";
+    };
   }, [step]);
 
   const validate = (): boolean => {
@@ -463,6 +482,13 @@ export function RegisterForm({ locale }: { locale: string }) {
     return Object.keys(errs).length === 0;
   };
 
+  const scrollToFormTop = () => {
+    const el = formTopRef.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY - 100; // clears the fixed navbar
+    window.scrollTo({ top, behavior: "smooth" });
+  };
+
   const handleNext = async () => {
     if (!validate()) return;
 
@@ -470,7 +496,7 @@ export function RegisterForm({ locale }: { locale: string }) {
       setDirection(1);
       setStep((s) => s + 1);
       setMaxStep((m) => Math.max(m, step + 1));
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      scrollToFormTop();
       return;
     }
 
@@ -492,6 +518,7 @@ export function RegisterForm({ locale }: { locale: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data,
+          locale,
           turnstileToken: turnstileTokenRef.current,
           _hp: honeypotRef.current,
           privacyConsent: true,
@@ -510,7 +537,7 @@ export function RegisterForm({ locale }: { locale: string }) {
         return;
       }
 
-      setRegistration({ id: json.registrationId, accessToken: json.accessToken });
+      setAccessToken(json.accessToken);
       setSubmitted(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
@@ -523,22 +550,21 @@ export function RegisterForm({ locale }: { locale: string }) {
   const handleBack = () => {
     setDirection(-1);
     setStep((s) => s - 1);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToFormTop();
   };
 
   const goToStep = (target: number) => {
     if (target === step || target > maxStep) return;
     setDirection(target > step ? 1 : -1);
     setStep(target);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToFormTop();
   };
 
-  if (submitted && data.nextStep === "payment" && registration && !paid) {
+  if (submitted && data.nextStep === "payment" && accessToken && !paid) {
     return (
       <div className="mx-auto w-full max-w-[720px]">
         <PaymentStep
-          registrationId={registration.id}
-          accessToken={registration.accessToken}
+          accessToken={accessToken}
           locale={locale}
           onPaid={() => setPaid(true)}
         />
@@ -576,7 +602,7 @@ export function RegisterForm({ locale }: { locale: string }) {
       <div className="grid grid-cols-1 gap-4 pt-4 lg:grid-cols-[220px_1fr] lg:gap-12 lg:pt-0">
         <RegisterSidebarDesktop steps={STEPS} current={step} maxStep={maxStep} onSelect={goToStep} />
 
-        <div className="flex min-w-0 flex-col">
+        <div ref={formTopRef} className="flex min-w-0 flex-col scroll-mt-24">
           <Reveal className="overflow-hidden rounded-2xl border border-[#ececec] p-6 shadow-sm md:p-8">
         <AnimatePresence mode="wait" custom={direction} initial={false}>
           <motion.div
@@ -588,7 +614,7 @@ export function RegisterForm({ locale }: { locale: string }) {
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="mb-6 border-b border-[#ececec] pb-5">
-              <h2 className="text-lg font-bold text-black">{STEPS[step].label}</h2>
+              <h2 className="text-xl font-bold text-brand-blue md:text-2xl">{STEPS[step].label}</h2>
               <p className="text-sm text-black/50">{STEPS[step].sublabel}</p>
             </div>
 
