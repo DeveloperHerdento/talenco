@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import Script from "next/script";
 import { AnimatePresence, motion } from "motion/react";
+import { ChevronDown } from "lucide-react";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { Reveal } from "@/components/ui/Reveal";
@@ -90,6 +91,15 @@ function TextInput({
   );
 }
 
+function Spinner() {
+  return (
+    <span
+      aria-hidden="true"
+      className="size-4 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent"
+    />
+  );
+}
+
 function Select({
   value,
   onChange,
@@ -101,23 +111,74 @@ function Select({
   options: string[];
   error?: string;
 }) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
   return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className={`w-full rounded-lg border bg-white px-4 py-3 text-sm outline-none transition-colors ${
-        error ? "border-brand-red focus:border-brand-red" : "border-[#e0e0e0] focus:border-brand-blue"
-      } ${value ? "text-black" : "text-black/40"}`}
-    >
-      <option value="" disabled>
-        選択してください / Choose
-      </option>
-      {options.map((o) => (
-        <option key={o} value={o}>
-          {o}
-        </option>
-      ))}
-    </select>
+    <div ref={rootRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className={`flex w-full items-center gap-3 rounded-lg border bg-white py-3 pr-4 pl-4 text-left text-sm outline-none transition-colors ${
+          error ? "border-brand-red focus:border-brand-red" : "border-[#e0e0e0] focus:border-brand-blue"
+        } ${value ? "text-black" : "text-black/40"}`}
+      >
+        <ChevronDown
+          className={`size-4 shrink-0 text-black/40 transition-transform ${open ? "rotate-180" : ""}`}
+        />
+        <span className="truncate">{value || "選択してください / Choose"}</span>
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.ul
+            role="listbox"
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.12 }}
+            className="absolute z-20 mt-2 max-h-64 w-full overflow-auto rounded-xl border border-[#e0e0e0] bg-white p-1.5 shadow-lg shadow-black/5"
+          >
+            {options.map((o) => (
+              <li key={o}>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={value === o}
+                  onClick={() => {
+                    onChange(o);
+                    setOpen(false);
+                  }}
+                  className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+                    value === o ? "bg-brand-blue/10 text-brand-blue" : "text-black/70 hover:bg-black/5"
+                  }`}
+                >
+                  {o}
+                </button>
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -218,7 +279,16 @@ function Step1({
           value={data.phone}
           onChange={(v) => onChange("phone", v)}
           inputClassName="!w-full !py-3 !text-sm !border-[#e0e0e0]"
-          countrySelectorStyleProps={{ buttonClassName: "!border-[#e0e0e0]" }}
+          countrySelectorStyleProps={{
+            buttonClassName: "!border-[#e0e0e0]",
+            dropdownStyleProps: {
+              className: "!rounded-xl !border-[#e0e0e0] !p-1.5 !shadow-lg !shadow-black/5",
+              listItemClassName: "!rounded-lg !px-3 !py-2.5 !text-sm !text-black/70 hover:!bg-black/5",
+              listItemSelectedClassName: "!bg-brand-blue/10 !text-brand-blue",
+              listItemFocusedClassName: "!bg-black/5",
+              listItemDialCodeClassName: "!text-black/40",
+            },
+          }}
         />
       </FieldWrap>
       <FieldWrap label="LINE ID" sublabel="LINE ID" required error={errors.lineId}>
@@ -404,47 +474,45 @@ export function RegisterForm({ locale }: { locale: string }) {
     setErrors((e) => ({ ...e, reasons: undefined }));
   };
 
-  // Render the Turnstile widget once the script has loaded and step 4 is mounted.
-  //
-  // Step 4's content lives inside AnimatePresence's <motion.div key={step}> — leaving and
-  // returning to step 4 fully unmounts and remounts that subtree, so turnstileContainerRef
-  // points at a brand-new DOM node each time. widgetIdRef must be reset (and the old widget
-  // torn down) on every effect cleanup, or the "already rendered" guard below skips
-  // rendering into the new container and the widget just never reappears.
+  const renderTurnstile = useCallback(() => {
+    const win = window as Window & {
+      turnstile?: {
+        render: (el: HTMLElement, opts: Record<string, unknown>) => string;
+      };
+    };
+    if (!turnstileContainerRef.current || !win.turnstile || widgetIdRef.current !== null) return;
+    if (!TURNSTILE_SITE_KEY) return;
+
+    widgetIdRef.current = win.turnstile.render(turnstileContainerRef.current, {
+      sitekey: TURNSTILE_SITE_KEY,
+      callback: (token: string) => {
+        turnstileTokenRef.current = token;
+      },
+      "expired-callback": () => {
+        turnstileTokenRef.current = "";
+      },
+    });
+  }, []);
+
+  const setTurnstileContainer = useCallback(
+    (node: HTMLDivElement | null) => {
+      turnstileContainerRef.current = node;
+      if (node) renderTurnstile();
+    },
+    [renderTurnstile]
+  );
+
   useEffect(() => {
     if (step !== 3) return;
 
-    let cancelled = false;
-
-    function render() {
-      const win = window as Window & {
-        turnstile?: {
-          render: (el: HTMLElement, opts: Record<string, unknown>) => string;
-        };
-      };
-      if (cancelled || !turnstileContainerRef.current || !win.turnstile || widgetIdRef.current !== null) return;
-      if (!TURNSTILE_SITE_KEY) return;
-
-      widgetIdRef.current = win.turnstile.render(turnstileContainerRef.current, {
-        sitekey: TURNSTILE_SITE_KEY,
-        callback: (token: string) => {
-          turnstileTokenRef.current = token;
-        },
-        "expired-callback": () => {
-          turnstileTokenRef.current = "";
-        },
-      });
-    }
-
     const w = window as unknown as Record<string, unknown>;
     if (typeof w.turnstile !== "undefined") {
-      render();
+      renderTurnstile();
     } else {
-      w.__onTurnstileReady = render;
+      w.__onTurnstileReady = renderTurnstile;
     }
 
     return () => {
-      cancelled = true;
       const win = window as Window & { turnstile?: { remove: (id: string) => void } };
       if (widgetIdRef.current !== null) {
         win.turnstile?.remove(widgetIdRef.current);
@@ -452,7 +520,7 @@ export function RegisterForm({ locale }: { locale: string }) {
       widgetIdRef.current = null;
       turnstileTokenRef.current = "";
     };
-  }, [step]);
+  }, [step, renderTurnstile]);
 
   const validate = (): boolean => {
     const errs: Errors = {};
@@ -644,7 +712,7 @@ export function RegisterForm({ locale }: { locale: string }) {
                   </span>
                 </label>
 
-                <div ref={turnstileContainerRef} className="min-h-[65px]" />
+                <div ref={setTurnstileContainer} className="min-h-[65px]" />
 
                 {submitError && (
                   <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3">
@@ -669,8 +737,13 @@ export function RegisterForm({ locale }: { locale: string }) {
                 <span className="text-xs text-black/40">
                   {step + 1} / {STEPS.length}
                 </span>
-                <Button variant="primary" onClick={handleNext} disabled={submitting}>
-                  {submitting ? "送信中... / Submitting..." : isLastStep ? "送信する / Submit" : "次へ / Next →"}
+                <Button
+                  variant="primary"
+                  onClick={handleNext}
+                  disabled={submitting}
+                  icon={submitting ? <Spinner /> : undefined}
+                >
+                  {submitting ? "送信中 / Submitting" : isLastStep ? "送信する / Submit" : "次へ / Next →"}
                 </Button>
               </div>
             </div>
