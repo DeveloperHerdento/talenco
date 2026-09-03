@@ -2,7 +2,6 @@ import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { RichText } from "@/components/ui/RichText";
 import { FadeUp } from "@/components/ui/FadeUp";
-import { REGISTER_FORM_URL } from "@/lib/constants/course-guide";
 import { NAVBAR_ANIMATION_END_MS } from "@/lib/constants/animation";
 import type { Dictionary } from "@/lib/i18n/dictionary";
 import type { Locale } from "@/lib/i18n/locales";
@@ -58,7 +57,7 @@ export function Hero({ dict, locale }: { dict: Dictionary["hero"]; locale: Local
 
           <div className="flex flex-wrap items-center gap-3">
             <FadeUp className="inline-block" delayMs={NAVBAR_ANIMATION_END_MS + 500} durationMs={400}>
-              <a href={REGISTER_FORM_URL} target="_blank" rel="noreferrer">
+              <a href={`/${locale}/register`}>
                 <Button variant="primary" size="lg">{dict.ctaPrimary}</Button>
               </a>
             </FadeUp>

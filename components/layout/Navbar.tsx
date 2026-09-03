@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from "motion/react";
 import { Menu, X } from "lucide-react";
 import { useScrollVisibility } from "@/hooks/useScrolled";
 import { NAV_LINKS, resolveNavHref } from "@/lib/constants/nav-links";
-import { REGISTER_FORM_URL } from "@/lib/constants/course-guide";
 import { NAVBAR_START_MS } from "@/lib/constants/animation";
 import { Button } from "@/components/ui/Button";
 import { FadeUp } from "@/components/ui/FadeUp";
@@ -68,7 +67,7 @@ export default function Navbar({ dict, locale }: NavbarProps) {
           durationMs={300}
         >
           <LangToggle locale={locale} />
-          <a href={REGISTER_FORM_URL} target="_blank" rel="noreferrer">
+          <a href={`/${locale}/register`}>
             <Button variant="primary">{dict.register}</Button>
           </a>
         </FadeUp>

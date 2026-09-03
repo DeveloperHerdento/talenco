@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { RichText } from "@/components/ui/RichText";
-import { REGISTER_FORM_URL } from "@/lib/constants/course-guide";
 import type { Dictionary } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/locales";
 
-export function CTA({ dict }: { dict: Dictionary["cta"] }) {
+export function CTA({ dict, locale }: { dict: Dictionary["cta"]; locale: Locale }) {
   return (
     <section className="w-full py-14 md:py-18 lg:py-20">
       <div className="mx-auto w-full max-w-[1240px] px-4 md:px-8">
@@ -20,7 +20,7 @@ export function CTA({ dict }: { dict: Dictionary["cta"] }) {
             </h2>
             <p className="text-sm text-white/80 md:text-base">{dict.subtitle}</p>
           </div>
-          <a href={REGISTER_FORM_URL} target="_blank" rel="noreferrer">
+          <a href={`/${locale}/register`}>
             <Button variant="outline" size="lg">
               {dict.ctaPrimary}
             </Button>

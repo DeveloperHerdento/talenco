@@ -1,7 +1,7 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { DocSection } from "@/components/docs/DocSection";
 import { Button } from "@/components/ui/Button";
-import { REGISTER_FORM_URL, VISA_FORM_URL } from "@/lib/constants/course-guide";
+import { VISA_FORM_URL } from "@/lib/constants/course-guide";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/locales";
 
@@ -28,7 +28,7 @@ export async function CourseRegistration({ locale }: { locale: Locale }) {
           ))}
         </ol>
         <div className="flex flex-wrap gap-3">
-          <a href={REGISTER_FORM_URL} target="_blank" rel="noreferrer">
+          <a href={`/${locale}/register`}>
             <Button variant="primary">{t.registrationFormBtn}</Button>
           </a>
           <a href={VISA_FORM_URL} target="_blank" rel="noreferrer">

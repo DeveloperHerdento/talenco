@@ -2,7 +2,7 @@
 
 import { ButtonHTMLAttributes, CSSProperties, MouseEvent, ReactNode, useRef, useState } from "react";
 
-type Variant = "primary" | "secondary" | "outline" | "outlineLight";
+type Variant = "primary" | "secondary" | "outline" | "outlineLight" | "line" | "whatsapp";
 type Size = "md" | "lg";
 
 type BaseProps = {
@@ -20,6 +20,8 @@ const VARIANT_CLASSES: Record<Variant, string> = {
   secondary: "bg-brand-blue text-white border border-white/20",
   outline: "bg-white text-black border border-[#e0e0e0]",
   outlineLight: "bg-white/10 text-white border border-white/40",
+  line: "bg-[#00B900] text-white border border-white/20",
+  whatsapp: "bg-[#25D366] text-white border border-white/20",
 };
 
 const FILL_CLASSES: Record<Variant, string> = {
@@ -27,6 +29,8 @@ const FILL_CLASSES: Record<Variant, string> = {
   secondary: "bg-white",
   outline: "bg-brand-orange",
   outlineLight: "bg-brand-orange",
+  line: "bg-white",
+  whatsapp: "bg-white",
 };
 
 const HOVER_TEXT_CLASSES: Record<Variant, string> = {
@@ -34,6 +38,8 @@ const HOVER_TEXT_CLASSES: Record<Variant, string> = {
   secondary: "group-hover:text-brand-blue",
   outline: "group-hover:text-white",
   outlineLight: "group-hover:text-white",
+  line: "group-hover:text-[#00B900]",
+  whatsapp: "group-hover:text-[#25D366]",
 };
 
 const SIZE_CLASSES: Record<Size, string> = {
@@ -52,6 +58,8 @@ type ConflictingHandlers =
 type ButtonProps = BaseProps &
   Omit<ButtonHTMLAttributes<HTMLButtonElement>, ConflictingHandlers | "onClick"> & {
     href?: string;
+    target?: string;
+    rel?: string;
   };
 
 export function Button({
@@ -62,6 +70,8 @@ export function Button({
   className = "",
   style,
   href,
+  target,
+  rel,
   onClick,
   ...props
 }: ButtonProps) {
@@ -115,6 +125,8 @@ export function Button({
       <a
         ref={rootRef}
         href={href}
+        target={target}
+        rel={rel}
         className={classes}
         style={style}
         onClick={onClick}
