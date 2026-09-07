@@ -9,7 +9,7 @@ import "react-international-phone/style.css";
 import { Reveal } from "@/components/ui/Reveal";
 import { Button } from "@/components/ui/Button";
 import { RegisterSidebarDesktop, RegisterSidebarMobile } from "@/components/register/RegisterSidebar";
-import { PaymentStep } from "@/components/register/PaymentStep";
+import { TURNSTILE_TEST_SITE_KEY, isLocalHostname } from "@/lib/constants/turnstile";
 import {
   CAREER_OPTIONS,
   ENGLISH_OPTIONS,
@@ -33,6 +33,15 @@ if (typeof window !== "undefined") {
 type Errors = Partial<Record<keyof FormData, string>>;
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+// The real site key is domain-allow-listed (production + the dev ngrok domain) and won't
+// load on plain localhost — swap in Cloudflare's always-pass test key there instead.
+function effectiveTurnstileSiteKey(): string | undefined {
+  if (process.env.NODE_ENV !== "production" && typeof window !== "undefined" && isLocalHostname(window.location.hostname)) {
+    return TURNSTILE_TEST_SITE_KEY;
+  }
+  return TURNSTILE_SITE_KEY;
+}
 
 // ── shared field primitives (restyled to the site's brand tokens) ──────────
 
@@ -430,7 +439,7 @@ function ThankYou({ name, locale, nextStep }: { name: string; locale: string; ne
       <p className="text-sm text-black/60">
         Thank you, {name}. Your registration has been received.{" "}
         {nextStep === "payment"
-          ? "Our team will contact you with payment instructions by email or LINE/WhatsApp shortly."
+          ? "Check your confirmation email for a link to complete your payment."
           : "We'll follow up by email shortly with more information."}
       </p>
       <a href={`/${locale}`} className="text-brand-blue text-sm font-semibold hover:underline">
@@ -452,8 +461,6 @@ export function RegisterForm({ locale }: { locale: string }) {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [paid, setPaid] = useState(false);
 
   const formTopRef = useRef<HTMLDivElement>(null);
   const honeypotRef = useRef("");
@@ -480,11 +487,12 @@ export function RegisterForm({ locale }: { locale: string }) {
         render: (el: HTMLElement, opts: Record<string, unknown>) => string;
       };
     };
+    const sitekey = effectiveTurnstileSiteKey();
     if (!turnstileContainerRef.current || !win.turnstile || widgetIdRef.current !== null) return;
-    if (!TURNSTILE_SITE_KEY) return;
+    if (!sitekey) return;
 
     widgetIdRef.current = win.turnstile.render(turnstileContainerRef.current, {
-      sitekey: TURNSTILE_SITE_KEY,
+      sitekey,
       callback: (token: string) => {
         turnstileTokenRef.current = token;
       },
@@ -605,7 +613,6 @@ export function RegisterForm({ locale }: { locale: string }) {
         return;
       }
 
-      setAccessToken(json.accessToken);
       setSubmitted(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
@@ -628,17 +635,16 @@ export function RegisterForm({ locale }: { locale: string }) {
     scrollToFormTop();
   };
 
-  if (submitted && data.nextStep === "payment" && accessToken && !paid) {
-    return (
-      <div className="mx-auto w-full max-w-[720px]">
-        <PaymentStep
-          accessToken={accessToken}
-          locale={locale}
-          onPaid={() => setPaid(true)}
-        />
-      </div>
-    );
-  }
+  // Enter advances to the next step (or submits, on the last one) from any field —
+  // except buttons, which already respond to Enter with their own click (dropdown
+  // toggles, option pickers) and would otherwise double-fire.
+  const handleStepKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== "Enter") return;
+    const target = e.target as HTMLElement;
+    if (target.tagName === "BUTTON" || target.tagName === "TEXTAREA" || target.tagName === "A") return;
+    e.preventDefault();
+    if (!submitting) handleNext();
+  };
 
   if (submitted) return <ThankYou name={data.fullName} locale={locale} nextStep={data.nextStep} />;
 
@@ -670,7 +676,7 @@ export function RegisterForm({ locale }: { locale: string }) {
       <div className="grid grid-cols-1 gap-4 pt-4 lg:grid-cols-[220px_1fr] lg:gap-12 lg:pt-0">
         <RegisterSidebarDesktop steps={STEPS} current={step} maxStep={maxStep} onSelect={goToStep} />
 
-        <div ref={formTopRef} className="flex min-w-0 flex-col scroll-mt-24">
+        <div ref={formTopRef} className="flex min-w-0 flex-col scroll-mt-24" onKeyDown={handleStepKeyDown}>
           <Reveal className="overflow-hidden rounded-2xl border border-[#ececec] p-6 shadow-sm md:p-8">
         <AnimatePresence mode="wait" custom={direction} initial={false}>
           <motion.div
