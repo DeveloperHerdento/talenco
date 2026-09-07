@@ -7,6 +7,7 @@ import { resend } from "@/lib/resend";
 import { htmlEscape } from "@/lib/html";
 import { getClientIp } from "@/lib/request";
 import { logger } from "@/lib/logger";
+import { TURNSTILE_TEST_SECRET_KEY, isLocalHostname } from "@/lib/constants/turnstile";
 
 const schema = z.object({
   email: z.string().trim().toLowerCase().email().max(254),
@@ -30,13 +31,13 @@ const schema = z.object({
   privacyConsent: z.literal(true),
 });
 
-async function verifyTurnstile(token: string, ip: string | null): Promise<boolean> {
+async function verifyTurnstile(token: string, ip: string | null, secret: string): Promise<boolean> {
   try {
     const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        secret: env.turnstileSecretKey,
+        secret,
         response: token,
         ...(ip ? { remoteip: ip } : {}),
       }),
@@ -97,9 +98,17 @@ export async function POST(request: NextRequest) {
     data.turnstileToken === "__dev_bypass__" &&
     !sitekeyConfigured;
 
+  // Mirrors the client's swap to Cloudflare's dummy site key on localhost (RegisterForm.tsx) —
+  // a token minted by the dummy site key only verifies against the matching dummy secret.
+  const isLocalDevRequest =
+    process.env.NODE_ENV !== "production" && isLocalHostname((request.headers.get("host") ?? "").split(":")[0]);
+  const turnstileSecret = isLocalDevRequest ? TURNSTILE_TEST_SECRET_KEY : env.turnstileSecretKey;
+
   // Turnstile verify and the duplicate-email lookup are independent — run in parallel.
   const [turnstileOk, dupResult] = await Promise.all([
-    isDevBypass ? Promise.resolve(true) : verifyTurnstile(data.turnstileToken, ip === "unknown" ? null : ip),
+    isDevBypass
+      ? Promise.resolve(true)
+      : verifyTurnstile(data.turnstileToken, ip === "unknown" ? null : ip, turnstileSecret),
     supabase.from("registrations").select("id, status").eq("email", data.email).neq("status", "failed").maybeSingle(),
   ]);
 
@@ -189,18 +198,21 @@ export async function POST(request: NextRequest) {
           <p>ご登録いただきありがとうございます。<br/>Thank you for registering for the Global Career Starter Program.</p>
           ${
             isPayment
-              ? `<p>近日中にお支払いに関するご案内をお送りします。<br/>We will send you payment instructions shortly.</p>`
+              ? `<p>以下のリンクからお支払い手続きに進めます。<br/>Use the link below to complete your payment.</p>`
               : `<p>近日中に詳細情報をお送りします。<br/>We will send you more information shortly.</p>`
           }
           <div style="background:#f0f7ff;border-radius:8px;padding:16px;margin:20px 0">
-            <p style="margin:0 0 8px;font-weight:bold">📋 登録状況の確認 / View Your Registration</p>
+            <p style="margin:0 0 8px;font-weight:bold">${isPayment ? "💳 お支払い / Payment" : "📋 登録状況の確認 / View Your Registration"}</p>
             <p style="margin:0 0 12px;font-size:13px;color:#475569">
-              以下のリンクからいつでも登録状況を確認できます。<br/>
-              Use this link anytime to check your registration status.
+              ${
+                isPayment
+                  ? "以下のリンクからお支払い、または登録状況の確認ができます。<br/>Use this link to complete your payment or check your registration status."
+                  : "以下のリンクからいつでも登録状況を確認できます。<br/>Use this link anytime to check your registration status."
+              }
             </p>
             <a href="${statusUrl}"
                style="display:inline-block;background:#2081F9;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px">
-              登録状況を確認する / View My Registration →
+              ${isPayment ? "お支払いへ進む / Proceed to Payment →" : "登録状況を確認する / View My Registration →"}
             </a>
             <p style="margin:12px 0 0;font-size:11px;color:#94a3b8">
               ※ このリンクはあなた専用です。第三者に共有しないでください。<br/>
