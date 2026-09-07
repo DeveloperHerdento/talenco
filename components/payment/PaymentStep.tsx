@@ -6,7 +6,15 @@ import { Reveal } from "@/components/ui/Reveal";
 import { SecurityDisclaimer } from "@/components/payment/SecurityDisclaimer";
 import { useXenditCardSession } from "@/components/payment/useXenditCardSession";
 import { pollPaymentStatus } from "@/components/payment/pollPaymentStatus";
-import { PROGRAM_FEES, DP_PERCENT, resolveAmount, type ProgramScheme, type PaymentType } from "@/lib/constants/payment";
+import {
+  PROGRAM_FEES,
+  DP_PERCENT,
+  resolveDisplayAmount,
+  resolveDisplayBalance,
+  formatJpy,
+  type ProgramScheme,
+  type PaymentType,
+} from "@/lib/constants/payment";
 
 type PaymentStepProps = {
   accessToken: string;
@@ -19,7 +27,7 @@ const DP_LABEL = `${Math.round(DP_PERCENT * 100)}%`;
 export function PaymentStep({ accessToken, locale, onPaid }: PaymentStepProps) {
   const [scheme, setScheme] = useState<ProgramScheme>("online");
   const [paymentType, setPaymentType] = useState<PaymentType>("full");
-  const { phase, error, ready, chargedAmount, containerRef, start, pay } = useXenditCardSession(onPaid, {
+  const { phase, error, ready, containerRef, start, pay } = useXenditCardSession(onPaid, {
     confirmPaid: () => pollPaymentStatus(accessToken, (d) => d.status === "paid"),
   });
 
@@ -33,18 +41,17 @@ export function PaymentStep({ accessToken, locale, onPaid }: PaymentStepProps) {
     );
 
   const fee = PROGRAM_FEES[scheme];
-  const previewAmount = resolveAmount(scheme, paymentType);
+  const previewAmount = resolveDisplayAmount(scheme, paymentType);
   const showSelection = phase === "idle" || phase === "starting";
 
   return (
     <Reveal className="overflow-hidden rounded-2xl border border-[#ececec] p-6 shadow-sm md:p-8">
       <div className="mb-6 border-b border-[#ececec] pb-5">
-        <h2 className="text-lg font-bold text-black">お支払い</h2>
+        <h2 className="text-xl font-bold text-brand-blue md:text-2xl">お支払い</h2>
         <p className="text-sm text-black/50">Payment</p>
       </div>
 
-      {showSelection ? (
-        <div className="space-y-6">
+      <div className="space-y-6" hidden={!showSelection}>
           <div className="space-y-2">
             <p className="text-sm font-semibold text-black">
               参加プログラム <span className="ml-1 font-normal text-black/50">/ Program</span>
@@ -70,7 +77,7 @@ export function PaymentStep({ accessToken, locale, onPaid }: PaymentStepProps) {
                       {option.nameJa} <span className="text-black/50">/ {option.nameEn}</span>
                     </span>
                   </span>
-                  <span className="text-sm font-semibold text-black/70">{option.jpyLabel}</span>
+                  <span className="text-sm font-semibold text-black/70">{formatJpy(option.amountJpy)}</span>
                 </label>
               );
             })}
@@ -97,7 +104,7 @@ export function PaymentStep({ accessToken, locale, onPaid }: PaymentStepProps) {
                 <br />
                 <span className="text-black/50">Reserve with a {DP_LABEL} down payment</span>
               </span>
-              <span className="text-sm font-semibold text-black/70">${resolveAmount(scheme, "dp")}</span>
+              <span className="text-sm font-semibold text-black/70">{formatJpy(resolveDisplayAmount(scheme, "dp"))}</span>
             </label>
             <label
               className={`flex cursor-pointer items-start gap-3 rounded-lg border px-4 py-3 transition-colors ${
@@ -116,12 +123,12 @@ export function PaymentStep({ accessToken, locale, onPaid }: PaymentStepProps) {
                 <br />
                 <span className="text-black/50">Pay in full</span>
               </span>
-              <span className="text-sm font-semibold text-black/70">${resolveAmount(scheme, "full")}</span>
+              <span className="text-sm font-semibold text-black/70">{formatJpy(resolveDisplayAmount(scheme, "full"))}</span>
             </label>
             {paymentType === "dp" && (
               <p className="px-1 text-xs text-black/45">
-                残金 ${fee.amountUsd - previewAmount} は後日ご案内します。/ The remaining $
-                {fee.amountUsd - previewAmount} will be invoiced separately.
+                残金 {formatJpy(resolveDisplayBalance(scheme, "dp") ?? 0)} は後日ご案内します。/ The remaining{" "}
+                {formatJpy(resolveDisplayBalance(scheme, "dp") ?? 0)} will be invoiced separately.
               </p>
             )}
           </div>
@@ -137,21 +144,19 @@ export function PaymentStep({ accessToken, locale, onPaid }: PaymentStepProps) {
           <Button variant="primary" onClick={startSession} disabled={phase === "starting"} className="w-full justify-center">
             {phase === "starting"
               ? "準備中... / Preparing..."
-              : `カード情報を入力する ($${previewAmount}) / Enter Card Details`}
+              : `カード情報を入力する (${formatJpy(previewAmount)}) / Enter Card Details`}
           </Button>
-        </div>
-      ) : (
-        <div className="space-y-5">
+      </div>
+
+      <div className="space-y-5" hidden={showSelection}>
           <div className="flex items-center justify-between rounded-lg bg-[#f7f9fc] px-4 py-3 text-sm">
             <span className="text-black/60">
               {fee.nameJa} / {fee.nameEn} · {paymentType === "dp" ? `${DP_LABEL} DP` : locale === "ja" ? "全額" : "Full"}
             </span>
-            <span className="font-semibold text-black">
-              {chargedAmount ? `$${chargedAmount.amount} ${chargedAmount.currency}` : fee.jpyLabel}
-            </span>
+            <span className="font-semibold text-black">{formatJpy(previewAmount)}</span>
           </div>
 
-          <div ref={containerRef} className="min-h-[120px]" />
+          <div ref={containerRef} className="min-h-30" />
 
           <SecurityDisclaimer compact />
 
@@ -173,8 +178,7 @@ export function PaymentStep({ accessToken, locale, onPaid }: PaymentStepProps) {
                 ? "処理中... / Processing..."
                 : "支払う / Pay"}
           </Button>
-        </div>
-      )}
+      </div>
     </Reveal>
   );
 }
