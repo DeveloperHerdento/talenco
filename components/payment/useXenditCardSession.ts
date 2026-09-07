@@ -49,13 +49,16 @@ export function useXenditCardSession(onPaid: () => void, options: Options = {}) 
       componentsRef.current = components;
 
       const handleInit = () => {
-        const cardChannel = components.getActiveChannels({ filter: "CARDS" })[0] as XenditPaymentChannel | undefined;
-        if (!cardChannel || !containerRef.current) {
-          setError("クレジットカード決済が現在ご利用いただけません。/ Card payment is not available right now.");
+        if (!containerRef.current) {
+          setError("決済処理中にエラーが発生しました。/ Something went wrong during payment.");
           setPhase("error");
           return;
         }
-        const el = components.createChannelComponent(cardChannel);
+        const cardChannel = components.getActiveChannels({ filter: "CARDS" })[0] as XenditPaymentChannel | undefined;
+        // Falls back to the full channel picker if CARDS isn't active on the business
+        // account — same pattern sns-analytical uses (PaymentModal.tsx/CheckoutPage.tsx)
+        // so a merchant-side channel-activation gap doesn't block payment entirely.
+        const el = cardChannel ? components.createChannelComponent(cardChannel) : components.createChannelPickerComponent();
         channelElRef.current = el;
         containerRef.current.replaceChildren(el);
         setPhase("card-form");
