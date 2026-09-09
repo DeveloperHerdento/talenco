@@ -59,9 +59,8 @@ export type Dictionary = {
   testimonials: {
     eyebrow: string;
     title: string;
-    pauseScroll: string;
-    resumeScroll: string;
-    items: Record<"ayu" | "rafael" | "sarah" | "budi" | "mei", { quote: string; role: string; year: string }>;
+    videoCaption: string;
+    items: Record<"hiroyuki" | "grace", { quote: string; role: string }>;
   };
   location: {
     eyebrow: string;

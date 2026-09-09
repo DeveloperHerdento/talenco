@@ -32,7 +32,7 @@ export const TIMELINE: TimelineStep[] = [
   },
   {
     key: "arrival",
-    date: "29 November 2026",
+    date: "29 Nov 2026",
     dateJa: "2026年11月29日",
     start: "2026-11-29",
     end: "2026-11-29",
@@ -40,7 +40,7 @@ export const TIMELINE: TimelineStep[] = [
   },
   {
     key: "program",
-    date: "30 November – 12 December 2026",
+    date: "30 Nov – 12 Dec 2026",
     dateJa: "2026年11月30日～12月12日",
     start: "2026-11-30",
     end: "2026-12-12",
