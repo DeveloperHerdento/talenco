@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import Script from "next/script";
 import { AnimatePresence, motion } from "motion/react";
+import { ChevronDown } from "lucide-react";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { Reveal } from "@/components/ui/Reveal";
 import { Button } from "@/components/ui/Button";
 import { RegisterSidebarDesktop, RegisterSidebarMobile } from "@/components/register/RegisterSidebar";
-import { PaymentStep } from "@/components/register/PaymentStep";
+import { TURNSTILE_TEST_SITE_KEY, isLocalHostname } from "@/lib/constants/turnstile";
 import {
   CAREER_OPTIONS,
   ENGLISH_OPTIONS,
@@ -32,6 +33,15 @@ if (typeof window !== "undefined") {
 type Errors = Partial<Record<keyof FormData, string>>;
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+// The real site key is domain-allow-listed (production + the dev ngrok domain) and won't
+// load on plain localhost — swap in Cloudflare's always-pass test key there instead.
+function effectiveTurnstileSiteKey(): string | undefined {
+  if (process.env.NODE_ENV !== "production" && typeof window !== "undefined" && isLocalHostname(window.location.hostname)) {
+    return TURNSTILE_TEST_SITE_KEY;
+  }
+  return TURNSTILE_SITE_KEY;
+}
 
 // ── shared field primitives (restyled to the site's brand tokens) ──────────
 
@@ -90,6 +100,15 @@ function TextInput({
   );
 }
 
+function Spinner() {
+  return (
+    <span
+      aria-hidden="true"
+      className="size-4 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent"
+    />
+  );
+}
+
 function Select({
   value,
   onChange,
@@ -101,23 +120,74 @@ function Select({
   options: string[];
   error?: string;
 }) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
   return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className={`w-full rounded-lg border bg-white px-4 py-3 text-sm outline-none transition-colors ${
-        error ? "border-brand-red focus:border-brand-red" : "border-[#e0e0e0] focus:border-brand-blue"
-      } ${value ? "text-black" : "text-black/40"}`}
-    >
-      <option value="" disabled>
-        選択してください / Choose
-      </option>
-      {options.map((o) => (
-        <option key={o} value={o}>
-          {o}
-        </option>
-      ))}
-    </select>
+    <div ref={rootRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className={`flex w-full items-center gap-3 rounded-lg border bg-white py-3 pr-4 pl-4 text-left text-sm outline-none transition-colors ${
+          error ? "border-brand-red focus:border-brand-red" : "border-[#e0e0e0] focus:border-brand-blue"
+        } ${value ? "text-black" : "text-black/40"}`}
+      >
+        <ChevronDown
+          className={`size-4 shrink-0 text-black/40 transition-transform ${open ? "rotate-180" : ""}`}
+        />
+        <span className="truncate">{value || "選択してください / Choose"}</span>
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.ul
+            role="listbox"
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.12 }}
+            className="absolute z-20 mt-2 max-h-64 w-full overflow-auto rounded-xl border border-[#e0e0e0] bg-white p-1.5 shadow-lg shadow-black/5"
+          >
+            {options.map((o) => (
+              <li key={o}>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={value === o}
+                  onClick={() => {
+                    onChange(o);
+                    setOpen(false);
+                  }}
+                  className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+                    value === o ? "bg-brand-blue/10 text-brand-blue" : "text-black/70 hover:bg-black/5"
+                  }`}
+                >
+                  {o}
+                </button>
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -218,7 +288,16 @@ function Step1({
           value={data.phone}
           onChange={(v) => onChange("phone", v)}
           inputClassName="!w-full !py-3 !text-sm !border-[#e0e0e0]"
-          countrySelectorStyleProps={{ buttonClassName: "!border-[#e0e0e0]" }}
+          countrySelectorStyleProps={{
+            buttonClassName: "!border-[#e0e0e0]",
+            dropdownStyleProps: {
+              className: "!rounded-xl !border-[#e0e0e0] !p-1.5 !shadow-lg !shadow-black/5",
+              listItemClassName: "!rounded-lg !px-3 !py-2.5 !text-sm !text-black/70 hover:!bg-black/5",
+              listItemSelectedClassName: "!bg-brand-blue/10 !text-brand-blue",
+              listItemFocusedClassName: "!bg-black/5",
+              listItemDialCodeClassName: "!text-black/40",
+            },
+          }}
         />
       </FieldWrap>
       <FieldWrap label="LINE ID" sublabel="LINE ID" required error={errors.lineId}>
@@ -360,7 +439,7 @@ function ThankYou({ name, locale, nextStep }: { name: string; locale: string; ne
       <p className="text-sm text-black/60">
         Thank you, {name}. Your registration has been received.{" "}
         {nextStep === "payment"
-          ? "Our team will contact you with payment instructions by email or LINE/WhatsApp shortly."
+          ? "Check your confirmation email for a link to complete your payment."
           : "We'll follow up by email shortly with more information."}
       </p>
       <a href={`/${locale}`} className="text-brand-blue text-sm font-semibold hover:underline">
@@ -382,8 +461,6 @@ export function RegisterForm({ locale }: { locale: string }) {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [paid, setPaid] = useState(false);
 
   const formTopRef = useRef<HTMLDivElement>(null);
   const honeypotRef = useRef("");
@@ -404,47 +481,46 @@ export function RegisterForm({ locale }: { locale: string }) {
     setErrors((e) => ({ ...e, reasons: undefined }));
   };
 
-  // Render the Turnstile widget once the script has loaded and step 4 is mounted.
-  //
-  // Step 4's content lives inside AnimatePresence's <motion.div key={step}> — leaving and
-  // returning to step 4 fully unmounts and remounts that subtree, so turnstileContainerRef
-  // points at a brand-new DOM node each time. widgetIdRef must be reset (and the old widget
-  // torn down) on every effect cleanup, or the "already rendered" guard below skips
-  // rendering into the new container and the widget just never reappears.
+  const renderTurnstile = useCallback(() => {
+    const win = window as Window & {
+      turnstile?: {
+        render: (el: HTMLElement, opts: Record<string, unknown>) => string;
+      };
+    };
+    const sitekey = effectiveTurnstileSiteKey();
+    if (!turnstileContainerRef.current || !win.turnstile || widgetIdRef.current !== null) return;
+    if (!sitekey) return;
+
+    widgetIdRef.current = win.turnstile.render(turnstileContainerRef.current, {
+      sitekey,
+      callback: (token: string) => {
+        turnstileTokenRef.current = token;
+      },
+      "expired-callback": () => {
+        turnstileTokenRef.current = "";
+      },
+    });
+  }, []);
+
+  const setTurnstileContainer = useCallback(
+    (node: HTMLDivElement | null) => {
+      turnstileContainerRef.current = node;
+      if (node) renderTurnstile();
+    },
+    [renderTurnstile]
+  );
+
   useEffect(() => {
     if (step !== 3) return;
 
-    let cancelled = false;
-
-    function render() {
-      const win = window as Window & {
-        turnstile?: {
-          render: (el: HTMLElement, opts: Record<string, unknown>) => string;
-        };
-      };
-      if (cancelled || !turnstileContainerRef.current || !win.turnstile || widgetIdRef.current !== null) return;
-      if (!TURNSTILE_SITE_KEY) return;
-
-      widgetIdRef.current = win.turnstile.render(turnstileContainerRef.current, {
-        sitekey: TURNSTILE_SITE_KEY,
-        callback: (token: string) => {
-          turnstileTokenRef.current = token;
-        },
-        "expired-callback": () => {
-          turnstileTokenRef.current = "";
-        },
-      });
-    }
-
     const w = window as unknown as Record<string, unknown>;
     if (typeof w.turnstile !== "undefined") {
-      render();
+      renderTurnstile();
     } else {
-      w.__onTurnstileReady = render;
+      w.__onTurnstileReady = renderTurnstile;
     }
 
     return () => {
-      cancelled = true;
       const win = window as Window & { turnstile?: { remove: (id: string) => void } };
       if (widgetIdRef.current !== null) {
         win.turnstile?.remove(widgetIdRef.current);
@@ -452,7 +528,7 @@ export function RegisterForm({ locale }: { locale: string }) {
       widgetIdRef.current = null;
       turnstileTokenRef.current = "";
     };
-  }, [step]);
+  }, [step, renderTurnstile]);
 
   const validate = (): boolean => {
     const errs: Errors = {};
@@ -537,7 +613,6 @@ export function RegisterForm({ locale }: { locale: string }) {
         return;
       }
 
-      setAccessToken(json.accessToken);
       setSubmitted(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
@@ -560,17 +635,16 @@ export function RegisterForm({ locale }: { locale: string }) {
     scrollToFormTop();
   };
 
-  if (submitted && data.nextStep === "payment" && accessToken && !paid) {
-    return (
-      <div className="mx-auto w-full max-w-[720px]">
-        <PaymentStep
-          accessToken={accessToken}
-          locale={locale}
-          onPaid={() => setPaid(true)}
-        />
-      </div>
-    );
-  }
+  // Enter advances to the next step (or submits, on the last one) from any field —
+  // except buttons, which already respond to Enter with their own click (dropdown
+  // toggles, option pickers) and would otherwise double-fire.
+  const handleStepKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== "Enter") return;
+    const target = e.target as HTMLElement;
+    if (target.tagName === "BUTTON" || target.tagName === "TEXTAREA" || target.tagName === "A") return;
+    e.preventDefault();
+    if (!submitting) handleNext();
+  };
 
   if (submitted) return <ThankYou name={data.fullName} locale={locale} nextStep={data.nextStep} />;
 
@@ -602,7 +676,7 @@ export function RegisterForm({ locale }: { locale: string }) {
       <div className="grid grid-cols-1 gap-4 pt-4 lg:grid-cols-[220px_1fr] lg:gap-12 lg:pt-0">
         <RegisterSidebarDesktop steps={STEPS} current={step} maxStep={maxStep} onSelect={goToStep} />
 
-        <div ref={formTopRef} className="flex min-w-0 flex-col scroll-mt-24">
+        <div ref={formTopRef} className="flex min-w-0 flex-col scroll-mt-24" onKeyDown={handleStepKeyDown}>
           <Reveal className="overflow-hidden rounded-2xl border border-[#ececec] p-6 shadow-sm md:p-8">
         <AnimatePresence mode="wait" custom={direction} initial={false}>
           <motion.div
@@ -644,7 +718,7 @@ export function RegisterForm({ locale }: { locale: string }) {
                   </span>
                 </label>
 
-                <div ref={turnstileContainerRef} className="min-h-[65px]" />
+                <div ref={setTurnstileContainer} className="min-h-[65px]" />
 
                 {submitError && (
                   <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3">
@@ -669,8 +743,13 @@ export function RegisterForm({ locale }: { locale: string }) {
                 <span className="text-xs text-black/40">
                   {step + 1} / {STEPS.length}
                 </span>
-                <Button variant="primary" onClick={handleNext} disabled={submitting}>
-                  {submitting ? "送信中... / Submitting..." : isLastStep ? "送信する / Submit" : "次へ / Next →"}
+                <Button
+                  variant="primary"
+                  onClick={handleNext}
+                  disabled={submitting}
+                  icon={submitting ? <Spinner /> : undefined}
+                >
+                  {submitting ? "送信中 / Submitting" : isLastStep ? "送信する / Submit" : "次へ / Next →"}
                 </Button>
               </div>
             </div>

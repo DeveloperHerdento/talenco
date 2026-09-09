@@ -6,17 +6,20 @@ import { Reveal } from "@/components/ui/Reveal";
 import { SecurityDisclaimer } from "@/components/payment/SecurityDisclaimer";
 import { useXenditCardSession } from "@/components/payment/useXenditCardSession";
 import { pollPaymentStatus } from "@/components/payment/pollPaymentStatus";
+import { formatJpy } from "@/lib/constants/payment";
 
 type BalancePaymentPanelProps = {
   accessToken: string;
   locale: string;
+  // The JPY amount locked in when the DP session was created (registrations.display_balance_amount)
+  // — never recomputed from live pricing, so it can't drift from what /api/payment/balance-session
+  // actually charges (which uses the equally locked-in IDR balance_amount).
   balanceAmount: number;
-  balanceCurrency: string;
 };
 
-export function BalancePaymentPanel({ accessToken, locale, balanceAmount, balanceCurrency }: BalancePaymentPanelProps) {
+export function BalancePaymentPanel({ accessToken, locale, balanceAmount }: BalancePaymentPanelProps) {
   const [paid, setPaid] = useState(false);
-  const { phase, error, ready, chargedAmount, containerRef, start, pay } = useXenditCardSession(() => setPaid(true), {
+  const { phase, error, ready, containerRef, start, pay } = useXenditCardSession(() => setPaid(true), {
     confirmPaid: () => pollPaymentStatus(accessToken, (d) => d.balancePaidAt !== null),
   });
 
@@ -48,13 +51,10 @@ export function BalancePaymentPanel({ accessToken, locale, balanceAmount, balanc
         <p className="text-sm text-black/50">Pay Remaining Balance</p>
       </div>
 
-      {showSelection ? (
-        <div className="space-y-5">
+      <div className="space-y-5" hidden={!showSelection}>
           <div className="flex items-center justify-between rounded-lg bg-[#f7f9fc] px-4 py-3 text-sm">
             <span className="text-black/60">残額 / Balance due</span>
-            <span className="text-base font-semibold text-black">
-              ${balanceAmount} {balanceCurrency}
-            </span>
+            <span className="text-base font-semibold text-black">{formatJpy(balanceAmount)}</span>
           </div>
 
           <SecurityDisclaimer />
@@ -66,19 +66,17 @@ export function BalancePaymentPanel({ accessToken, locale, balanceAmount, balanc
           )}
 
           <Button variant="primary" onClick={startSession} disabled={phase === "starting"} className="w-full justify-center">
-            {phase === "starting" ? "準備中... / Preparing..." : `カード情報を入力する ($${balanceAmount}) / Enter Card Details`}
+            {phase === "starting" ? "準備中... / Preparing..." : `カード情報を入力する (${formatJpy(balanceAmount)}) / Enter Card Details`}
           </Button>
-        </div>
-      ) : (
-        <div className="space-y-5">
+      </div>
+
+      <div className="space-y-5" hidden={showSelection}>
           <div className="flex items-center justify-between rounded-lg bg-[#f7f9fc] px-4 py-3 text-sm">
             <span className="text-black/60">残額 / Balance due</span>
-            <span className="font-semibold text-black">
-              {chargedAmount ? `$${chargedAmount.amount} ${chargedAmount.currency}` : `$${balanceAmount} ${balanceCurrency}`}
-            </span>
+            <span className="font-semibold text-black">{formatJpy(balanceAmount)}</span>
           </div>
 
-          <div ref={containerRef} className="min-h-[120px]" />
+          <div ref={containerRef} className="min-h-30" />
 
           <SecurityDisclaimer compact />
 
@@ -100,8 +98,7 @@ export function BalancePaymentPanel({ accessToken, locale, balanceAmount, balanc
                 ? "処理中... / Processing..."
                 : "支払う / Pay"}
           </Button>
-        </div>
-      )}
+      </div>
     </Reveal>
   );
 }

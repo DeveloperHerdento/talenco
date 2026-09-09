@@ -7,10 +7,12 @@ import { DocHero } from "@/components/docs/DocHero";
 import { DocContactLinks } from "@/components/docs/DocContactLinks";
 import { Reveal } from "@/components/ui/Reveal";
 import { BalancePaymentPanel } from "@/components/payment/BalancePaymentPanel";
+import { InitialPaymentPanel } from "@/components/payment/InitialPaymentPanel";
 import { supabase } from "@/lib/supabase";
 import { statusLimiter } from "@/lib/ratelimit";
 import { getClientIpFromHeaders } from "@/lib/request";
-import { PROGRAM_FEES, type ProgramScheme } from "@/lib/constants/payment";
+import { logger } from "@/lib/logger";
+import { PROGRAM_FEES, formatJpy, type ProgramScheme } from "@/lib/constants/payment";
 import { isLocale, type Locale } from "@/lib/i18n/locales";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -28,9 +30,11 @@ type Registration = {
   payment_type: string | null;
   expected_amount: number | null;
   expected_currency: string | null;
+  display_amount: number | null;
   paid_at: string | null;
   balance_amount: number | null;
   balance_currency: string | null;
+  display_balance_amount: number | null;
   balance_paid_at: string | null;
   next_step: string;
 };
@@ -102,21 +106,42 @@ function NotFoundCard() {
   );
 }
 
+function ErrorCard() {
+  return (
+    <Reveal className="flex flex-col items-center gap-4 rounded-2xl border border-[#ececec] p-10 text-center">
+      <p className="text-sm text-black/60">
+        登録状況の確認中にエラーが発生しました。しばらくしてからもう一度お試しください。
+        <br />
+        Something went wrong while checking your registration. Please try again shortly.
+      </p>
+      <DocContactLinks />
+    </Reveal>
+  );
+}
+
 async function RegistrationStatus({ token, lang }: { token: string; lang: Locale }) {
-  const { data: reg } = await supabase
+  const { data: reg, error } = await supabase
     .from("registrations")
     .select(
-      "id, full_name, status, scheme, payment_type, expected_amount, expected_currency, paid_at, balance_amount, balance_currency, balance_paid_at, next_step"
+      "id, full_name, status, scheme, payment_type, expected_amount, expected_currency, display_amount, paid_at, balance_amount, balance_currency, display_balance_amount, balance_paid_at, next_step"
     )
     .eq("access_token", token)
     .maybeSingle<Registration>();
 
+  // A query error (bad column, connection hiccup) is not the same as "no such token" —
+  // conflating them here previously made a schema mismatch look identical to an invalid
+  // link, with no server-side trace to diagnose it from.
+  if (error) {
+    logger.error("My page: registration lookup failed", { error: error.message });
+    return <ErrorCard />;
+  }
   if (!reg) return <NotFoundCard />;
 
   const fee = reg.scheme ? PROGRAM_FEES[reg.scheme as ProgramScheme] : null;
   const isPaid = reg.status === "paid";
   const isDp = reg.payment_type === "dp";
   const balanceOwed = isPaid && isDp && !reg.balance_paid_at;
+  const needsInitialPayment = !isPaid && reg.next_step === "payment";
 
   return (
     <>
@@ -138,38 +163,36 @@ async function RegistrationStatus({ token, lang }: { token: string; lang: Locale
           <div className="flex flex-col gap-2 border-t border-[#ececec] pt-4 text-sm">
             <div className="flex items-center justify-between">
               <span className="text-black/60">プログラム / Program</span>
-              <span className="font-semibold text-black">{fee.jpyLabel}</span>
+              <span className="font-semibold text-black">{formatJpy(fee.amountJpy)}</span>
             </div>
-            {isPaid && reg.expected_amount !== null && (
+            {isPaid && reg.display_amount !== null && (
               <div className="flex items-center justify-between">
                 <span className="text-black/60">{isDp ? "頭金 / Down payment" : "お支払い額 / Paid"}</span>
-                <span className="font-semibold text-black">
-                  ${reg.expected_amount} {reg.expected_currency}
-                </span>
+                <span className="font-semibold text-black">{formatJpy(reg.display_amount)}</span>
               </div>
             )}
             {isDp && reg.balance_amount !== null && (
               <div className="flex items-center justify-between">
                 <span className="text-black/60">残額 / Balance</span>
                 <span className="font-semibold text-black">
-                  {reg.balance_paid_at ? "お支払い済み / Paid" : `$${reg.balance_amount} ${reg.balance_currency}`}
+                  {reg.balance_paid_at ? "お支払い済み / Paid" : formatJpy(reg.display_balance_amount ?? 0)}
                 </span>
               </div>
             )}
           </div>
         )}
 
-        {!isPaid && (
+        {!isPaid && !needsInitialPayment && (
           <p className="border-t border-[#ececec] pt-4 text-xs text-black/50">
-            {reg.next_step === "payment"
-              ? "お支払いに関するご案内は登録完了メールをご確認ください。/ Check your registration email for payment instructions."
-              : "近日中に担当者より詳細情報をご案内します。/ Our team will follow up shortly with more information."}
+            近日中に担当者より詳細情報をご案内します。/ Our team will follow up shortly with more information.
           </p>
         )}
       </Reveal>
 
-      {balanceOwed && reg.balance_amount !== null && reg.balance_currency && (
-        <BalancePaymentPanel accessToken={token} locale={lang} balanceAmount={reg.balance_amount} balanceCurrency={reg.balance_currency} />
+      {needsInitialPayment && <InitialPaymentPanel accessToken={token} locale={lang} />}
+
+      {balanceOwed && reg.display_balance_amount !== null && (
+        <BalancePaymentPanel accessToken={token} locale={lang} balanceAmount={reg.display_balance_amount} />
       )}
 
       <div className="flex flex-col items-center gap-3 text-center">

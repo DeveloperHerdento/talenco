@@ -6,7 +6,15 @@ import { env } from "@/lib/env";
 import { createCardPaymentSession, XenditApiError } from "@/lib/xendit";
 import { getClientIp } from "@/lib/request";
 import { logger } from "@/lib/logger";
-import { PROGRAM_FEES, XENDIT_CURRENCY, resolveAmount, resolveBalance, type ProgramScheme } from "@/lib/constants/payment";
+import {
+  PROGRAM_FEES,
+  XENDIT_CURRENCY,
+  resolveAmount,
+  resolveBalance,
+  resolveDisplayAmount,
+  resolveDisplayBalance,
+  type ProgramScheme,
+} from "@/lib/constants/payment";
 
 const schema = z.object({
   accessToken: z.string().uuid(),
@@ -133,6 +141,12 @@ export async function POST(request: NextRequest) {
   // drifting if pricing changes between the DP and balance payments. null for "full".
   const balanceAmount = resolveBalance(scheme, paymentType);
 
+  // Display (JPY) figures are locked in alongside the charged (IDR) amount — /my must
+  // never recompute these from the live PROGRAM_FEES constants, or a pricing change
+  // would retroactively alter what an already-paid registrant sees they were charged.
+  const displayAmount = resolveDisplayAmount(scheme, paymentType);
+  const displayBalanceAmount = resolveDisplayBalance(scheme, paymentType);
+
   // Stored so the webhook can verify the amount Xendit reports actually matches
   // what we asked for, instead of trusting the webhook payload on its own.
   const { error: updateErr } = await supabase
@@ -144,8 +158,10 @@ export async function POST(request: NextRequest) {
       xendit_session_expires_at: session.expiresAt,
       expected_amount: amount,
       expected_currency: XENDIT_CURRENCY,
+      display_amount: displayAmount,
       balance_amount: balanceAmount,
       balance_currency: balanceAmount !== null ? XENDIT_CURRENCY : null,
+      display_balance_amount: displayBalanceAmount,
     })
     .eq("id", reg.id);
 

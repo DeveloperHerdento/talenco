@@ -14,7 +14,13 @@ export function LangToggle({ locale, className = "" }: { locale: Locale; classNa
 
   return (
     <Button variant="outline" href={href} className={className}>
-      <Image src={target.flag} alt="" width={18} height={18} className="rounded-full object-cover" />
+      <Image
+        src={target.flag}
+        alt=""
+        width={18}
+        height={18}
+        className="h-[18px] w-[18px] rounded-full object-cover"
+      />
       {target.code}
     </Button>
   );

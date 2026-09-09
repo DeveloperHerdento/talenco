@@ -60,6 +60,13 @@ export async function createCardPaymentSession(params: CreateSessionParams): Pro
       components_configuration: {
         origins: params.origins,
       },
+      channel_properties: {
+        cards: {
+          installment_configuration: {
+            allowed_terms: { terms: [] },
+          },
+        },
+      },
       customer: {
         type: "INDIVIDUAL",
         reference_id: params.referenceId,

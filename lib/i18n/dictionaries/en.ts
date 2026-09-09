@@ -115,38 +115,17 @@ const en: Dictionary = {
   testimonials: {
     eyebrow: "Testimonials",
     title: "What Past Participants Say.",
-    pauseScroll: "Pause scrolling",
-    resumeScroll: "Resume scrolling",
+    videoCaption: "Grace and Hiroyuki story · 2:14",
     items: {
-      ayu: {
+      hiroyuki: {
         quote:
-          "The Global Career Starter Program completely transformed my confidence in speaking English. The cultural immersion activities were incredibly valuable, and I now feel ready to take on international roles.",
-        role: "Student, Universitas Indonesia",
-        year: "2025",
+          "During our two weeks in Indonesia, we learned the language, experienced the culture, and felt the warm hospitality of the Indonesian people.\n\nAll of this progress is thanks to the guidance and patience of our lecturers. Thank you so much for all the guidance and support throughout our studies here.",
+        role: "Student, Kyoto University",
       },
-      rafael: {
+      grace: {
         quote:
-          "I was impressed by the practical digital marketing skills we learned. The networking sessions with professionals from Herdento Global Solution opened doors for my career that I didn't think were possible.",
-        role: "Young Professional, Tokyo",
-        year: "2025",
-      },
-      sarah: {
-        quote:
-          "The weekend trip to the Payung Islands was the highlight. It wasn't just a vacation; it was a chance to apply our new language skills in real-life situations with our international cohort.",
-        role: "Exchange Student, UK",
-        year: "2024",
-      },
-      budi: {
-        quote:
-          "Thanks to this program, I built the confidence and practical skills to apply for international internships. The mentors genuinely cared about our growth every step of the way.",
-        role: "Fresh Graduate, Jakarta",
-        year: "2024",
-      },
-      mei: {
-        quote:
-          "From day one, the hands-on projects felt like real work, not just training. I walked away with a portfolio I could actually show employers, and a network across three countries.",
-        role: "Marketing Trainee, Singapore",
-        year: "2023",
+          "We still remember our first day going to a restaurant near campus... the 11 of us couldn't even order food on our own. But now, we can ask for directions, order food, and even bargain at the mall! We are so grateful to the buddies who took us to many places, helped us whenever we had difficulties, and became such wonderful friends to us.",
+        role: "Student, Kyoto University",
       },
     },
   },
