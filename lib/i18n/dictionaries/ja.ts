@@ -248,6 +248,7 @@ const ja: Dictionary = {
       programFeeLabel: "プログラム費用",
       scheme1Note: "参加者1名あたり · 定員16〜28名",
       scheme2Note: "参加者1名あたり · 定員12〜24名",
+      taxExcludedNote: "上記の価格はすべて税抜き表示です。",
       onsitePeriodTitle: "現地プログラムのスケジュール",
       addOnTitle: "追加オプション費用（任意・現地開催のみ）",
       milestoneHeader: "項目",

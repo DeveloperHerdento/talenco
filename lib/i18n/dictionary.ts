@@ -137,6 +137,7 @@ export type Dictionary = {
       programFeeLabel: string;
       scheme1Note: string;
       scheme2Note: string;
+      taxExcludedNote: string;
       onsitePeriodTitle: string;
       addOnTitle: string;
       milestoneHeader: string;
