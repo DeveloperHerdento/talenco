@@ -1,10 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import { Search } from "lucide-react";
 import { AdminRegistrationRow, type Registration } from "@/components/admin/RegistrationRow";
 import { Pager } from "@/components/admin/Pager";
+import { SearchInput } from "@/components/admin/SearchInput";
+import { TableSkeletonRows } from "@/components/admin/TableSkeletonRows";
+import { EmptyTableRow } from "@/components/admin/EmptyTableRow";
 import { SelectMenu } from "@/components/ui/SelectMenu";
 import { usePaginatedList } from "@/lib/admin/usePaginatedList";
 import { useLoadingPulse } from "@/lib/admin/useLoadingPulse";
@@ -46,20 +47,15 @@ export function AdminTable({ rows, search, onSearchChange, statusFilter, onStatu
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative w-full sm:max-w-xs">
-          <Search size={15} className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-black/35" aria-hidden="true" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => {
-              onSearchChange(e.target.value);
-              setPage(1);
-              pulse();
-            }}
-            placeholder="Search by name or email"
-            className="w-full rounded-lg border border-[#e0e0e0] py-2 pr-3 pl-9 text-sm outline-none focus:border-brand-blue"
-          />
-        </div>
+        <SearchInput
+          value={search}
+          onChange={(value) => {
+            onSearchChange(value);
+            setPage(1);
+            pulse();
+          }}
+          placeholder="Search by name or email"
+        />
         <SelectMenu
           value={statusFilter}
           options={STATUS_FILTER_OPTIONS}
@@ -88,51 +84,21 @@ export function AdminTable({ rows, search, onSearchChange, statusFilter, onStatu
           </thead>
           <tbody>
             {loading ? (
-              <AnimatePresence>
-                {Array.from({ length: Math.min(PAGE_SIZE, Math.max(paginated.length, 4)) }).map((_, i) => (
-                  <motion.tr
-                    key={`skeleton-${i}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.15, delay: i * 0.02 }}
-                    className="border-b border-[#f2f2f2] last:border-0"
-                  >
-                    <td className="px-4 py-3">
-                      <div className="mb-1.5 h-3.5 w-32 animate-pulse rounded bg-[#ececec]" />
-                      <div className="h-2.5 w-40 animate-pulse rounded bg-[#f0f0f0]" />
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="h-3 w-16 animate-pulse rounded bg-[#ececec]" />
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="h-3 w-16 animate-pulse rounded bg-[#ececec]" />
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="h-5 w-24 animate-pulse rounded-full bg-[#ececec]" />
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="h-3 w-14 animate-pulse rounded bg-[#ececec]" />
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="mb-1.5 h-3 w-20 animate-pulse rounded bg-[#ececec]" />
-                      <div className="h-2.5 w-24 animate-pulse rounded bg-[#f0f0f0]" />
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="h-3 w-16 animate-pulse rounded bg-[#ececec]" />
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="h-3 w-10 animate-pulse rounded bg-[#ececec]" />
-                    </td>
-                  </motion.tr>
-                ))}
-              </AnimatePresence>
+              <TableSkeletonRows
+                rowCount={Math.min(PAGE_SIZE, Math.max(paginated.length, 4))}
+                cells={[
+                  { width: "w-32", height: "h-3.5", secondaryWidth: "w-40" },
+                  { width: "w-16" },
+                  { width: "w-16" },
+                  { width: "w-24", height: "h-5", rounded: "rounded-full" },
+                  { width: "w-14" },
+                  { width: "w-20", secondaryWidth: "w-24" },
+                  { width: "w-16" },
+                  { width: "w-10" },
+                ]}
+              />
             ) : paginated.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="px-4 py-10 text-center text-sm text-black/40">
-                  No registrations match this filter.
-                </td>
-              </tr>
+              <EmptyTableRow colSpan={8} message="No registrations match this filter." />
             ) : (
               paginated.map(({ reg, hasPlan, installments }) => (
                 <AdminRegistrationRow key={reg.id} reg={reg} hasPlan={hasPlan} installments={installments} />
