@@ -5,6 +5,7 @@ import { registerLimiter, emailRegisterLimiter } from "@/lib/ratelimit";
 import { env } from "@/lib/env";
 import { resend } from "@/lib/resend";
 import { htmlEscape } from "@/lib/html";
+import { emailLogoHeader, emailLogoAttachment } from "@/lib/emails/layout";
 import { getClientIp } from "@/lib/request";
 import { logger } from "@/lib/logger";
 import { TURNSTILE_TEST_SECRET_KEY, isLocalHostname } from "@/lib/constants/turnstile";
@@ -65,10 +66,10 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return Response.json({ error: "Invalid request body" }, { status: 400 });
+    return Response.json({ error: "リクエストの形式が正しくありません。/ Invalid request body." }, { status: 400 });
   }
 
-  // Honeypot check before validation — never reveal detection to whatever filled it.
+  // Never reveal honeypot detection to whatever filled it.
   const hp = (body as Record<string, unknown>)?._hp;
   if (typeof hp === "string" && hp.length > 0) {
     logger.warn("Register: honeypot triggered", { ip });
@@ -98,13 +99,11 @@ export async function POST(request: NextRequest) {
     data.turnstileToken === "__dev_bypass__" &&
     !sitekeyConfigured;
 
-  // Mirrors the client's swap to Cloudflare's dummy site key on localhost (RegisterForm.tsx) —
-  // a token minted by the dummy site key only verifies against the matching dummy secret.
+  // Mirrors the client's dummy site key on localhost (RegisterForm.tsx).
   const isLocalDevRequest =
     process.env.NODE_ENV !== "production" && isLocalHostname((request.headers.get("host") ?? "").split(":")[0]);
   const turnstileSecret = isLocalDevRequest ? TURNSTILE_TEST_SECRET_KEY : env.turnstileSecretKey;
 
-  // Turnstile verify and the duplicate-email lookup are independent — run in parallel.
   const [turnstileOk, dupResult] = await Promise.all([
     isDevBypass
       ? Promise.resolve(true)
@@ -183,16 +182,17 @@ export async function POST(request: NextRequest) {
   const isPayment = data.nextStep === "payment";
   const statusUrl = `${env.appUrl}/${data.locale}/my?token=${reg.access_token}`;
 
-  // after() keeps the serverless function alive for this send instead of a bare
-  // fire-and-forget promise, which Vercel can freeze right after the response returns.
+  // after() keeps the function alive for this send instead of a fire-and-forget promise.
   after(() =>
     resend.emails
       .send({
-        from: env.resendFromEmail,
+        from: `TalenCo <${env.resendFromEmail}>`,
         to: data.email,
         subject: "【TalenCo】ご登録ありがとうございます / Registration Received",
+        attachments: [emailLogoAttachment],
         html: `
         <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
+          ${emailLogoHeader()}
           <h2 style="color:#2081F9">TalenCo グローバルキャリア・スタータープログラム</h2>
           <p>${htmlEscape(data.fullName)} 様</p>
           <p>ご登録いただきありがとうございます。<br/>Thank you for registering for the Global Career Starter Program.</p>
