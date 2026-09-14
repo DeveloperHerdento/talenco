@@ -48,3 +48,10 @@ LEARN.md
 # documentation
 /docs
 /backup/*
+
+# local-only data exports (Supabase table dumps, etc.) — never belongs under public/, which
+# Next.js serves as static files with no auth check. Keep exports here instead.
+/.local-data/
+
+public/**/*.csv
+/.claude
