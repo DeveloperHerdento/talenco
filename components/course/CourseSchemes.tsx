@@ -1,5 +1,6 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { Stagger, StaggerItem } from "@/components/ui/Stagger";
+import { DocIntro } from "@/components/docs/DocIntro";
 import { DocTable } from "@/components/docs/DocTable";
 import { getCourseGuide } from "@/lib/constants/course-guide";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -30,10 +31,7 @@ export async function CourseSchemes({ locale }: { locale: Locale }) {
 
   return (
     <div id="schemes" className="flex flex-col gap-10 scroll-mt-44 lg:scroll-mt-32">
-      <Reveal>
-        <h2 className="text-2xl font-bold text-black md:text-3xl">{t.heading}</h2>
-        <p className="mt-2 text-sm text-black/60 md:text-base">{t.subtitle}</p>
-      </Reveal>
+      <DocIntro heading={t.heading} subtitle={t.subtitle} />
 
       <Stagger className="grid grid-cols-1 gap-6 lg:grid-cols-2" staggerDelay={0.15}>
         <StaggerItem>
@@ -70,6 +68,8 @@ export async function CourseSchemes({ locale }: { locale: Locale }) {
           </div>
         </StaggerItem>
       </Stagger>
+
+      <p className="text-xs text-black/45">{t.taxExcludedNote}</p>
 
       <Reveal className="flex flex-col gap-3">
         <h3 className="text-lg font-bold text-black">{t.onsitePeriodTitle}</h3>

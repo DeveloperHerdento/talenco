@@ -1,4 +1,4 @@
-import { Reveal } from "@/components/ui/Reveal";
+import { DocIntro } from "@/components/docs/DocIntro";
 import { DocSection } from "@/components/docs/DocSection";
 import { Button } from "@/components/ui/Button";
 import { VISA_FORM_URL } from "@/lib/constants/course-guide";
@@ -11,10 +11,7 @@ export async function CourseRegistration({ locale }: { locale: Locale }) {
 
   return (
     <div id="register" className="flex flex-col gap-10 scroll-mt-44 lg:scroll-mt-32">
-      <Reveal>
-        <h2 className="text-2xl font-bold text-black md:text-3xl">{t.heading}</h2>
-        <p className="mt-2 text-sm text-black/60 md:text-base">{t.subtitle}</p>
-      </Reveal>
+      <DocIntro heading={t.heading} subtitle={t.subtitle} />
 
       <DocSection number="1" title={t.sectionTitle}>
         <ol className="flex flex-col gap-3">
