@@ -55,9 +55,7 @@ export function useXenditCardSession(onPaid: () => void, options: Options = {}) 
           return;
         }
         const cardChannel = components.getActiveChannels({ filter: "CARDS" })[0] as XenditPaymentChannel | undefined;
-        // Falls back to the full channel picker if CARDS isn't active on the business
-        // account — same pattern sns-analytical uses (PaymentModal.tsx/CheckoutPage.tsx)
-        // so a merchant-side channel-activation gap doesn't block payment entirely.
+        // Falls back to the full channel picker if CARDS isn't active on the business account.
         const el = cardChannel ? components.createChannelComponent(cardChannel) : components.createChannelPickerComponent();
         channelElRef.current = el;
         containerRef.current.replaceChildren(el);
