@@ -43,13 +43,7 @@ export default async function AdminPage() {
   if (!(await isAdminAuthenticated())) {
     redirect("/admin/login");
   }
-
-  // Fetched separately (registrations → plans → installments) rather than a single nested
-  // Supabase select, matching this codebase's existing pattern of a few plain queries joined in
-  // JS over one complex embedded-relation query. Capped at REGISTRATIONS_LIMIT most-recent
-  // registrations — the exact total count is fetched alongside it so the UI can flag when older
-  // registrations are outside this window (search/filter only ever sees what's fetched here).
-  const [{ data: registrations, error: regErr }, { count: totalRegistrations }] = await Promise.all([
+const [{ data: registrations, error: regErr }, { count: totalRegistrations }] = await Promise.all([
     supabase
       .from("registrations")
       .select(
