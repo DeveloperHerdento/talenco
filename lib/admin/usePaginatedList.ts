@@ -2,10 +2,6 @@
 
 import { useState } from "react";
 
-// Shared by every admin table (Payments, Inquiries) so page-size, clamping, and the
-// "N-M of Total" math can't drift between them. Page is clamped at read time rather than via a
-// setState-in-effect — if a narrower filter drops the page count below the stored page, this
-// just renders the last valid page without an extra render.
 export function usePaginatedList<T>(items: T[], pageSize: number) {
   const [page, setPage] = useState(1);
   const pageCount = Math.max(1, Math.ceil(items.length / pageSize));
