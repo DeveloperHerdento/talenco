@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Play, Quote } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
+import { Stagger, StaggerItem } from "@/components/ui/Stagger";
 import { TESTIMONIALS } from "@/lib/constants/testimonials";
 import type { Dictionary } from "@/lib/i18n/dictionary";
 
@@ -20,7 +21,7 @@ function TestimonialCard({
 }) {
   return (
     <div
-      className={`flex flex-col gap-6 rounded-2xl border-[0.5px] border-[#e9e9e9] bg-white p-8 shadow-sm shadow-black/5 ${className ?? ""}`}
+      className={`flex h-full flex-col gap-6 rounded-2xl border-[0.5px] border-[#e9e9e9] bg-white p-8 shadow-sm shadow-black/5 ${className ?? ""}`}
     >
       <Quote className="text-brand-orange size-10" strokeWidth={1.75} />
       <p className="flex-1 whitespace-pre-line text-md leading-relaxed text-black/70">
@@ -61,7 +62,7 @@ function TestimonialVideo({ caption }: { caption: string }) {
   return (
     <div
       ref={containerRef}
-      className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black"
+      className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black lg:aspect-auto lg:h-full"
     >
       {!ready && (
         <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-white/10 via-white/5 to-transparent" />
@@ -108,24 +109,27 @@ export function Testimonials({ dict }: { dict: Dictionary["testimonials"] }) {
           <SectionHeading eyebrow={dict.eyebrow} title={dict.title} align="center" />
         </Reveal>
 
-        <Reveal className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
+        <Stagger className="grid grid-cols-1 gap-6 lg:grid-cols-3" staggerDelay={0.15}>
+          <StaggerItem className="lg:col-span-2">
             <TestimonialVideo caption={dict.videoCaption} />
-          </div>
+          </StaggerItem>
 
-          <TestimonialCard
-            quote={dict.items[TESTIMONIALS[0].key].quote}
-            name={TESTIMONIALS[0].name}
-            role={dict.items[TESTIMONIALS[0].key].role}
-          />
+          <StaggerItem>
+            <TestimonialCard
+              quote={dict.items[TESTIMONIALS[0].key].quote}
+              name={TESTIMONIALS[0].name}
+              role={dict.items[TESTIMONIALS[0].key].role}
+            />
+          </StaggerItem>
 
-          <TestimonialCard
-            className="lg:col-span-3"
-            quote={dict.items[TESTIMONIALS[1].key].quote}
-            name={TESTIMONIALS[1].name}
-            role={dict.items[TESTIMONIALS[1].key].role}
-          />
-        </Reveal>
+          <StaggerItem className="lg:col-span-3">
+            <TestimonialCard
+              quote={dict.items[TESTIMONIALS[1].key].quote}
+              name={TESTIMONIALS[1].name}
+              role={dict.items[TESTIMONIALS[1].key].role}
+            />
+          </StaggerItem>
+        </Stagger>
       </div>
     </section>
   );

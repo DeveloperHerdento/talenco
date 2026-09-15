@@ -7,6 +7,7 @@ import { ChevronDown } from "lucide-react";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { Reveal } from "@/components/ui/Reveal";
+import { PaymentSuccessBadge } from "@/components/payment/PaymentSuccessBadge";
 import { Button } from "@/components/ui/Button";
 import { RegisterSidebarDesktop, RegisterSidebarMobile } from "@/components/register/RegisterSidebar";
 import { TURNSTILE_TEST_SITE_KEY, isLocalHostname } from "@/lib/constants/turnstile";
@@ -434,7 +435,7 @@ function Step4({
 function ThankYou({ name, locale, nextStep }: { name: string; locale: string; nextStep: string }) {
   return (
     <Reveal className="mx-auto flex max-w-lg flex-col items-center gap-4 rounded-2xl border border-[#ececec] p-10 text-center">
-      <span className="bg-brand-orange flex size-14 items-center justify-center rounded-full text-2xl text-white">✓</span>
+      <PaymentSuccessBadge size="lg" />
       <h2 className="text-xl font-bold text-black">ご登録ありがとうございます</h2>
       <p className="text-sm text-black/60">
         Thank you, {name}. Your registration has been received.{" "}
@@ -533,26 +534,26 @@ export function RegisterForm({ locale }: { locale: string }) {
   const validate = (): boolean => {
     const errs: Errors = {};
     if (step === 0) {
-      if (!data.fullName.trim()) errs.fullName = "この項目は必須です";
-      if (!/^\S+@\S+\.\S+$/.test(data.email)) errs.email = "有効なメールアドレスを入力してください";
-      if (data.phone.trim().length < 7) errs.phone = "有効な電話番号を入力してください";
-      if (!data.lineId.trim()) errs.lineId = "この項目は必須です";
+      if (!data.fullName.trim()) errs.fullName = "この項目は必須です / This field is required";
+      if (!/^\S+@\S+\.\S+$/.test(data.email)) errs.email = "有効なメールアドレスを入力してください / Please enter a valid email address";
+      if (data.phone.trim().length < 7) errs.phone = "有効な電話番号を入力してください / Please enter a valid phone number";
+      if (!data.lineId.trim()) errs.lineId = "この項目は必須です / This field is required";
     }
     if (step === 1) {
-      if (!data.currentStatus) errs.currentStatus = "この項目は必須です";
-      if (!data.university.trim()) errs.university = "この項目は必須です";
-      if (!data.major.trim()) errs.major = "この項目は必須です";
-      if (!data.englishLevel) errs.englishLevel = "この項目は必須です";
+      if (!data.currentStatus) errs.currentStatus = "この項目は必須です / This field is required";
+      if (!data.university.trim()) errs.university = "この項目は必須です / This field is required";
+      if (!data.major.trim()) errs.major = "この項目は必須です / This field is required";
+      if (!data.englishLevel) errs.englishLevel = "この項目は必須です / This field is required";
     }
     if (step === 2) {
-      if (!data.studiedAbroad) errs.studiedAbroad = "この項目は必須です";
-      if (!data.overseasWork) errs.overseasWork = "この項目は必須です";
-      if (data.reasons.length === 0) errs.reasons = "少なくとも1つ選択してください";
-      if (!data.careerGoal) errs.careerGoal = "この項目は必須です";
+      if (!data.studiedAbroad) errs.studiedAbroad = "この項目は必須です / This field is required";
+      if (!data.overseasWork) errs.overseasWork = "この項目は必須です / This field is required";
+      if (data.reasons.length === 0) errs.reasons = "少なくとも1つ選択してください / Please select at least one";
+      if (!data.careerGoal) errs.careerGoal = "この項目は必須です / This field is required";
     }
     if (step === 3) {
-      if (!data.hearAbout) errs.hearAbout = "この項目は必須です";
-      if (!data.nextStep) errs.nextStep = "この項目は必須です";
+      if (!data.hearAbout) errs.hearAbout = "この項目は必須です / This field is required";
+      if (!data.nextStep) errs.nextStep = "この項目は必須です / This field is required";
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -635,9 +636,7 @@ export function RegisterForm({ locale }: { locale: string }) {
     scrollToFormTop();
   };
 
-  // Enter advances to the next step (or submits, on the last one) from any field —
-  // except buttons, which already respond to Enter with their own click (dropdown
-  // toggles, option pickers) and would otherwise double-fire.
+  // Enter advances the step, except from buttons (which already handle their own click).
   const handleStepKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key !== "Enter") return;
     const target = e.target as HTMLElement;

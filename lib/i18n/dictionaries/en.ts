@@ -249,6 +249,7 @@ const en: Dictionary = {
       programFeeLabel: "Program Fee",
       scheme1Note: "per participant · cohorts of 16–28",
       scheme2Note: "per participant · cohorts of 12–24",
+      taxExcludedNote: "All prices shown above are excluding tax.",
       onsitePeriodTitle: "On-Site Program Period",
       addOnTitle: "Add-On Fee (Optional, On-Site Only)",
       milestoneHeader: "Milestone",

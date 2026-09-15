@@ -1,26 +1,12 @@
-// Experimental Next.js convention (requires experimental.globalNotFound in
-// next.config.ts) for apps whose only layout is nested under a dynamic
-// segment (here, app/[lang]/layout.tsx). Next.js skips normal rendering for
-// this file, so it must be a fully self-contained document — its own
-// <html>/<body>, its own font, and its own import of globals.css — and it
-// can't read route params. It can still be async and read the saved-locale
-// cookie (set by proxy.ts) via next/headers, so the copy isn't stuck in
-// English for visitors who'd chosen Japanese.
 import type { Metadata } from "next";
 import Image from "next/image";
 import { cookies } from "next/headers";
-import { Plus_Jakarta_Sans } from "next/font/google";
 import { Button } from "@/components/ui/Button";
 import { RichText } from "@/components/ui/RichText";
 import { DEFAULT_LOCALE, LOCALE_COOKIE, isLocale } from "@/lib/i18n/locales";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { fontSans } from "@/lib/fonts";
 import "./globals.css";
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  variable: "--font-plus-jakarta-sans",
-});
 
 export const metadata: Metadata = {
   title: "404 - Page Not Found",
@@ -34,7 +20,7 @@ export default async function GlobalNotFound() {
   const dict = (await getDictionary(locale)).notFound;
 
   return (
-    <html lang={locale} className={plusJakartaSans.variable} suppressHydrationWarning>
+    <html lang={locale} className={fontSans.variable} suppressHydrationWarning>
       <body className="font-sans antialiased">
         <main className="flex min-h-screen w-full flex-col items-center justify-center gap-10 bg-white px-4 py-20 text-center sm:gap-12 sm:py-24 md:gap-14 md:px-8 md:py-28">
           <a href={`/${locale}`} className="shrink-0">

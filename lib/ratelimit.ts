@@ -44,12 +44,22 @@ export const checkoutLimiter = make(
     })
 );
 
-export const balanceCheckoutLimiter = make(
+export const installmentCheckoutLimiter = make(
   () =>
     new Ratelimit({
       redis: redis!,
       limiter: Ratelimit.slidingWindow(3, "1 h"),
-      prefix: "rl:checkout-balance",
+      prefix: "rl:checkout-installment",
+    })
+);
+
+// Tight window — brute-force protection on the single shared admin password.
+export const adminLoginLimiter = make(
+  () =>
+    new Ratelimit({
+      redis: redis!,
+      limiter: Ratelimit.slidingWindow(10, "1 h"),
+      prefix: "rl:admin-login",
     })
 );
 
@@ -59,5 +69,28 @@ export const statusLimiter = make(
       redis: redis!,
       limiter: Ratelimit.slidingWindow(30, "1 h"),
       prefix: "rl:status",
+    })
+);
+
+// Applied only to requests that already failed the x-callback-token check (see
+// app/api/payment/webhook/route.ts) — legitimate Xendit deliveries never hit this limiter, so it
+// can stay tight without any risk of throttling real traffic.
+export const webhookLimiter = make(
+  () =>
+    new Ratelimit({
+      redis: redis!,
+      limiter: Ratelimit.slidingWindow(20, "1 m"),
+      prefix: "rl:webhook",
+    })
+);
+
+// The scheduler calls this once a day from one source IP; a real cron tick never comes close to
+// this, so it only bites a leaked INSTALLMENT_CRON_SECRET being replayed rapidly.
+export const cronLimiter = make(
+  () =>
+    new Ratelimit({
+      redis: redis!,
+      limiter: Ratelimit.slidingWindow(6, "1 h"),
+      prefix: "rl:cron",
     })
 );

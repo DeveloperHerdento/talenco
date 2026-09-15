@@ -1,15 +1,9 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
 import { SITE_URL } from "@/lib/constants/site";
 import { LOCALES, DEFAULT_LOCALE, isLocale, type Locale } from "@/lib/i18n/locales";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { fontSans } from "@/lib/fonts";
 import "../globals.css";
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  variable: "--font-plus-jakarta-sans",
-});
 
 export function generateStaticParams() {
   return LOCALES.map((lang) => ({ lang }));
@@ -90,7 +84,7 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang={lang} className={plusJakartaSans.variable} suppressHydrationWarning>
+    <html lang={lang} className={fontSans.variable} suppressHydrationWarning>
       <body className="font-sans antialiased">
         <script
           type="application/ld+json"

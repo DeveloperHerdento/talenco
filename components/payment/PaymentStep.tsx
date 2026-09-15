@@ -6,11 +6,13 @@ import { Reveal } from "@/components/ui/Reveal";
 import { SecurityDisclaimer } from "@/components/payment/SecurityDisclaimer";
 import { useXenditCardSession } from "@/components/payment/useXenditCardSession";
 import { pollPaymentStatus } from "@/components/payment/pollPaymentStatus";
+import { Spinner } from "@/components/ui/Spinner";
 import {
   PROGRAM_FEES,
-  DP_PERCENT,
+  INSTALLMENT_COUNT,
   resolveDisplayAmount,
-  resolveDisplayBalance,
+  resolveDisplayInstallmentAmounts,
+  resolveInstallmentSchedule,
   formatJpy,
   type ProgramScheme,
   type PaymentType,
@@ -19,29 +21,31 @@ import {
 type PaymentStepProps = {
   accessToken: string;
   locale: string;
-  onPaid: () => void;
+  onPaid: (paymentType: PaymentType) => void;
 };
-
-const DP_LABEL = `${Math.round(DP_PERCENT * 100)}%`;
 
 export function PaymentStep({ accessToken, locale, onPaid }: PaymentStepProps) {
   const [scheme, setScheme] = useState<ProgramScheme>("online");
   const [paymentType, setPaymentType] = useState<PaymentType>("full");
-  const { phase, error, ready, containerRef, start, pay } = useXenditCardSession(onPaid, {
+  const { phase, error, ready, containerRef, start, pay } = useXenditCardSession(() => onPaid(paymentType), {
     confirmPaid: () => pollPaymentStatus(accessToken, (d) => d.status === "paid"),
   });
 
-  const startSession = () =>
+  // Full payment and installment 1 share this hook — installment just sets allow_save_payment_method server-side.
+  const startPayment = () =>
     start(() =>
-      fetch("/api/payment/session", {
+      fetch(paymentType === "installment" ? "/api/payment/installment-session" : "/api/payment/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessToken, scheme, paymentType, locale }),
+        body: JSON.stringify({ accessToken, scheme, locale }),
       })
     );
 
   const fee = PROGRAM_FEES[scheme];
-  const previewAmount = resolveDisplayAmount(scheme, paymentType);
+  const previewAmount = resolveDisplayAmount(scheme);
+  const installmentAmounts = resolveDisplayInstallmentAmounts(scheme);
+  const installmentAvailable = resolveInstallmentSchedule() !== null;
+  const chargeAmount = paymentType === "installment" ? installmentAmounts[0] : previewAmount;
   const showSelection = phase === "idle" || phase === "starting";
 
   return (
@@ -89,25 +93,6 @@ export function PaymentStep({ accessToken, locale, onPaid }: PaymentStepProps) {
             </p>
             <label
               className={`flex cursor-pointer items-start gap-3 rounded-lg border px-4 py-3 transition-colors ${
-                paymentType === "dp" ? "border-brand-blue bg-[#eaf3ff]" : "border-[#e0e0e0] hover:border-black/20"
-              }`}
-            >
-              <input
-                type="radio"
-                name="paymentType"
-                checked={paymentType === "dp"}
-                onChange={() => setPaymentType("dp")}
-                className="mt-0.5 accent-brand-blue"
-              />
-              <span className="flex-1 text-sm text-black">
-                頭金（{DP_LABEL}）で予約する
-                <br />
-                <span className="text-black/50">Reserve with a {DP_LABEL} down payment</span>
-              </span>
-              <span className="text-sm font-semibold text-black/70">{formatJpy(resolveDisplayAmount(scheme, "dp"))}</span>
-            </label>
-            <label
-              className={`flex cursor-pointer items-start gap-3 rounded-lg border px-4 py-3 transition-colors ${
                 paymentType === "full" ? "border-brand-blue bg-[#eaf3ff]" : "border-[#e0e0e0] hover:border-black/20"
               }`}
             >
@@ -123,15 +108,38 @@ export function PaymentStep({ accessToken, locale, onPaid }: PaymentStepProps) {
                 <br />
                 <span className="text-black/50">Pay in full</span>
               </span>
-              <span className="text-sm font-semibold text-black/70">{formatJpy(resolveDisplayAmount(scheme, "full"))}</span>
+              <span className="text-sm font-semibold text-black/70">{formatJpy(resolveDisplayAmount(scheme))}</span>
             </label>
-            {paymentType === "dp" && (
+            {installmentAvailable && (
+              <label
+                className={`flex cursor-pointer items-start gap-3 rounded-lg border px-4 py-3 transition-colors ${
+                  paymentType === "installment" ? "border-brand-blue bg-[#eaf3ff]" : "border-[#e0e0e0] hover:border-black/20"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="paymentType"
+                  checked={paymentType === "installment"}
+                  onChange={() => setPaymentType("installment")}
+                  className="mt-0.5 accent-brand-blue"
+                />
+                <span className="flex-1 text-sm text-black">
+                  {INSTALLMENT_COUNT}回の分割払い
+                  <br />
+                  <span className="text-black/50">Pay in {INSTALLMENT_COUNT} installments</span>
+                </span>
+                <span className="text-sm font-semibold text-black/70">{formatJpy(installmentAmounts[0])}〜</span>
+              </label>
+            )}
+            {paymentType === "installment" && (
               <p className="px-1 text-xs text-black/45">
-                残金 {formatJpy(resolveDisplayBalance(scheme, "dp") ?? 0)} は後日ご案内します。/ The remaining{" "}
-                {formatJpy(resolveDisplayBalance(scheme, "dp") ?? 0)} will be invoiced separately.
+                カード情報は保存され、以降の{INSTALLMENT_COUNT - 1}回は自動的に請求されます。/ Your card is saved and the
+                remaining {INSTALLMENT_COUNT - 1} charges happen automatically.
               </p>
             )}
           </div>
+
+          <p className="px-1 text-xs text-black/45">表示金額はすべて税抜きです。/ All amounts shown are excluding tax.</p>
 
           <SecurityDisclaimer />
 
@@ -141,22 +149,36 @@ export function PaymentStep({ accessToken, locale, onPaid }: PaymentStepProps) {
             </div>
           )}
 
-          <Button variant="primary" onClick={startSession} disabled={phase === "starting"} className="w-full justify-center">
+          <Button variant="primary" onClick={startPayment} disabled={phase === "starting"} className="w-full justify-center">
             {phase === "starting"
               ? "準備中... / Preparing..."
-              : `カード情報を入力する (${formatJpy(previewAmount)}) / Enter Card Details`}
+              : `カード情報を入力する (${formatJpy(chargeAmount)}) / Enter Card Details`}
           </Button>
       </div>
 
       <div className="space-y-5" hidden={showSelection}>
           <div className="flex items-center justify-between rounded-lg bg-[#f7f9fc] px-4 py-3 text-sm">
             <span className="text-black/60">
-              {fee.nameJa} / {fee.nameEn} · {paymentType === "dp" ? `${DP_LABEL} DP` : locale === "ja" ? "全額" : "Full"}
+              {fee.nameJa} / {fee.nameEn} ·{" "}
+              {paymentType === "installment"
+                ? locale === "ja"
+                  ? "分割払い 1/4"
+                  : "Installment 1/4"
+                : locale === "ja"
+                  ? "全額"
+                  : "Full"}
             </span>
-            <span className="font-semibold text-black">{formatJpy(previewAmount)}</span>
+            <span className="font-semibold text-black">{formatJpy(chargeAmount)}</span>
           </div>
 
-          <div ref={containerRef} className="min-h-30" />
+          <div className="relative min-h-30">
+            <div ref={containerRef} className={phase === "submitting" || phase === "confirming" ? "invisible h-0 overflow-hidden" : ""} />
+            {(phase === "submitting" || phase === "confirming") && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Spinner className="size-8 text-brand-blue" />
+              </div>
+            )}
+          </div>
 
           <SecurityDisclaimer compact />
 

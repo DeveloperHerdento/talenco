@@ -1,4 +1,5 @@
 import { Reveal } from "@/components/ui/Reveal";
+import { DocIntro } from "@/components/docs/DocIntro";
 import { getCourseGuide, type ScheduleRow } from "@/lib/constants/course-guide";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/locales";
@@ -28,10 +29,7 @@ export async function CourseSchedule({ locale }: { locale: Locale }) {
 
   return (
     <div id="schedule" className="flex flex-col gap-6 scroll-mt-44 lg:scroll-mt-32">
-      <Reveal>
-        <h2 className="text-2xl font-bold text-black md:text-3xl">{t.heading}</h2>
-        <p className="mt-2 text-sm text-black/60 md:text-base">{t.subtitle}</p>
-      </Reveal>
+      <DocIntro heading={t.heading} subtitle={t.subtitle} />
 
       <Reveal className="w-full overflow-x-auto rounded-xl border border-[#e5e5e5] shadow-sm">
         <table className="w-full min-w-[860px] border-collapse text-left text-xs md:text-sm">

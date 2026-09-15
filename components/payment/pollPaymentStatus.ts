@@ -1,4 +1,4 @@
-export type PaymentStatus = { status: string; paymentType: string | null; balancePaidAt: string | null };
+export type PaymentStatus = { status: string; paymentType: string | null };
 
 export async function pollPaymentStatus(
   accessToken: string,
