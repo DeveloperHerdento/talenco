@@ -1,69 +1,98 @@
 # TalenCo — Global Career Starter Program
 
-Registration, checkout, and installment-tracking web app for the TalenCo Global Career Starter Program (Japan → Indonesia).
+Marketing site, bilingual (ja/en) registration wizard, and embedded Xendit card-payment flow for
+the TalenCo Global Career Starter Program.
 
 ## Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 16.2.9 (App Router), React 19 |
+| Framework | Next.js 16 (App Router), React 19 |
 | Styling | Tailwind CSS v4 |
 | Database | Supabase (Postgres + service-role client) |
-| Payments | Xendit Invoice API v2 |
+| Payments | Xendit **Sessions API** (`mode: COMPONENTS`, embedded card form) |
 | Email | Resend |
-| Bot protection | Cloudflare Turnstile (explicit render) |
-| Rate limiting | Upstash Redis |
-| i18n | react-i18next (ja/en, landing page only) |
-| Deployment | Vercel (with Cron) |
+| Bot protection | Cloudflare Turnstile |
+| Rate limiting | Upstash Redis (no-op in local dev — see `lib/ratelimit.ts`) |
+| i18n | Custom dictionary lookup (`lib/i18n/`), ja/en, locale in the URL path |
+| Deployment | Netlify |
 
 ## Project Structure
 
 ```
 app/
-  page.tsx                      Landing page (bilingual, client component)
-  layout.tsx                    Root layout — loads Turnstile script
-  not-found.tsx                 404 page
-  register/page.tsx             4-step registration form + Turnstile
-  checkout/page.tsx             Package & installment plan selector
-  payment/
-    success/page.tsx            Post-payment confirmation
-    cancel/page.tsx             Cancelled/expired payment
-  my/page.tsx                   Token-based registration status page
-  privacy/page.tsx              Privacy policy
-  terms/page.tsx                Terms of service
+  [lang]/                        Locale-prefixed routes (/ja, /en) — see "i18n" below
+    page.tsx                     Landing page
+    layout.tsx                   Locale-scoped layout
+    course/page.tsx              Program curriculum / scheme details
+    register/page.tsx            4-step registration wizard
+    my/page.tsx                  Token-based status page — payment entry point + installment panel
+    (legal)/privacy/page.tsx     Privacy policy
+    (legal)/terms/page.tsx       Terms of service
   api/
-    register/route.ts           POST — validate, Turnstile verify, insert registration
-    checkout/route.ts           POST — verify ownership, create Xendit invoice
-    xendit-webhook/route.ts     POST — mark paid, chain next installment
-    status/route.ts             GET  — fetch registration + schedule by token
-    cron/installment-retry/     GET  — daily recovery for orphaned installments
+    register/route.ts            POST — validates, verifies Turnstile, inserts registration
+    payment/
+      session/route.ts           POST — creates the full-payment Xendit session
+      webhook/route.ts           POST — Xendit calls this; sole authority for marking paid
+      status/route.ts            GET  — polled by the client to confirm the webhook landed
+      installment-session/route.ts       POST — installment 1 (saves a reusable card token)
+      installment-charge-now/route.ts    POST — user-initiated "pay next"/"pay all remaining"
+      installment-run-schedule/route.ts  GET  — daily auto-charge trigger, secret-protected
+      installment-status/route.ts        GET  — polled installment progress
+    admin/
+      login/route.ts               POST — admin session login
+      logout/route.ts              POST — admin session logout
+  admin/
+    login/page.tsx                 Admin login screen
+    page.tsx                       Registrations/inquiries dashboard (tables, pagination, search)
+    layout.tsx                     Auth-gated admin shell
+  global-not-found.tsx
+  robots.ts / sitemap.ts
+  globals.css
 
 components/
-  Navbar.tsx
+  course/     Program/curriculum content sections
+  layout/     Navbar, footer, language toggle, mobile drawer
+  payment/    PaymentStep, InstallmentPaymentPanel, PaymentSuccessBadge, shared Xendit Components hook
+  register/   RegisterForm, RegisterSidebar
+  admin/      AdminTable, InquiriesTable + shared bits (SearchInput, TableSkeletonRows, EmptyTableRow, Pager, Banner)
+  sections/   Landing page sections (Hero, FAQ, Testimonials, ...)
+  ui/         Small shared primitives (Button, Reveal, SectionHeading, HoverIconBadge, ...)
+  docs/       Layout pieces for the course/curriculum pages
 
 lib/
-  env.ts          Server-only env validation (throws on missing vars)
-  supabase.ts     Supabase service-role client (server-only)
-  resend.ts       Resend client
-  ratelimit.ts    Upstash rate limiters (IP, email, status)
-  logger.ts       Structured JSON logger (server-only)
-  request.ts      getClientIp helper
-  html.ts         htmlEscape helper
+  constants/       Static content + PROGRAM_FEES/pricing logic (payment.ts)
+  i18n/             get-dictionary.ts + dictionaries/{en,ja}.ts, locales.ts
+  admin/            Admin auth/session status, useLoadingPulse, usePaginatedList
+  env.ts            Server-only env var validation — throws at import time if anything's missing
+  supabase.ts       Supabase client (service-role key, bypasses RLS, server-only)
+  xendit.ts         createCardPaymentSession() — POST https://api.xendit.co/sessions
+  xendit-payments.ts Payments API client (installment plan — saved-card, auto-charged)
+  installments.ts   claimAndChargeInstallments() — shared atomic-claim-then-charge logic
+  admin-auth.ts     Admin session verification
+  resend.ts         Resend client
+  emails/           Transactional email templates
+  ratelimit.ts      Upstash rate limiters (no-op in dev)
+  redis.ts          Upstash Redis client
+  logger.ts         Structured JSON logger
+  request.ts        getClientIp()
+  html.ts           htmlEscape() — XSS prevention for emails
+  timing-safe.ts    Constant-time comparisons for secrets/tokens
+  fonts.ts          Shared next/font/google setup (site + admin variants)
+  alerts.ts         Ops/error alerting
 
-i18n/
-  config.ts       Locale config (ja default, en fallback)
-  client.ts       react-i18next init
-
-locales/
-  ja/landing.json
-  en/landing.json
-
-middleware.ts     Per-request CSP with nonce (Next.js 16 reads from request header)
+hooks/              useMobile, useScrolled
+proxy.ts            Locale routing — redirects "/" to a cookie/default locale, rewrites unknown
+                     locale segments to the 404 page, sets the locale cookie (replaces middleware.ts)
 ```
+
+`app/[lang]/` and `proxy.ts` are the whole i18n mechanism — there's no separate `locales/` JSON
+tree or `i18next` runtime. See `lib/i18n/dictionaries/{en,ja}.ts`.
 
 ## Environment Variables
 
-Create `.env.local` for local development. All variables are required unless marked optional.
+The required list is enforced at startup by `lib/env.ts` — it throws on import if anything's
+missing, so a misconfigured deploy fails the whole build rather than one request at a time.
 
 ```env
 # Supabase
@@ -71,213 +100,101 @@ NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=eyJ...
 
 # Xendit
-XENDIT_SECRET_KEY=xnd_production_...
-XENDIT_WEBHOOK_TOKEN=your_webhook_secret   # any random string, set same value in Xendit dashboard
+XENDIT_SECRET_KEY=xnd_development_...           # xnd_production_... in prod
+XENDIT_WEBHOOK_TOKEN=any_random_string          # same value set in the Xendit dashboard
+INSTALLMENT_CRON_SECRET=any_random_string       # protects GET /api/payment/installment-run-schedule
 
 # Resend
 RESEND_API_KEY=re_...
-RESEND_FROM_EMAIL=noreply@yourdomain.com   # must be a verified domain in Resend
+RESEND_FROM_EMAIL=noreply@yourdomain.com        # must be a verified domain in Resend
 
-# Cloudflare Turnstile
-NEXT_PUBLIC_TURNSTILE_SITE_KEY=0x4AAAAAAA...   # omit in dev to use bypass mode
-TURNSTILE_SECRET_KEY=0x4AAAAAAA...
-
-# Upstash Redis
-UPSTASH_REDIS_REST_URL=https://...upstash.io
+# Upstash Redis (skipped entirely in local dev — see lib/ratelimit.ts)
+UPSTASH_REDIS_REST_URL=https://xxxx.upstash.io
 UPSTASH_REDIS_REST_TOKEN=AXxx...
 
+# Cloudflare Turnstile
+TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA   # omit to use the dev-bypass path
+
+# Admin panel
+ADMIN_PASSWORD=any_strong_shared_password       # single shared password, no user accounts
+
 # App
-NEXT_PUBLIC_APP_URL=http://localhost:3000   # production: https://yourdomain.com
+NEXT_PUBLIC_APP_URL=http://localhost:3000       # production: your real domain
 
-# Vercel Cron (add in Vercel dashboard, not .env.local)
-# CRON_SECRET=random_secret_string
+# Optional — fan-out the payment webhook to other systems (see docs/WEBHOOK_FANOUT_PLAN.md)
+FORWARD_APP2_URL=
+FORWARD_APP2_SECRET=                            # own random secret, never reuse XENDIT_WEBHOOK_TOKEN
+FORWARD_APP3_URL=
+FORWARD_APP3_SECRET=
+FORWARD_TIMEOUT_MS=5000
+FORWARD_MAX_RETRIES=3
+
+OPS_ALERT_EMAIL=                                # emails reconciliation problems here instead of only logging
 ```
 
-> **Dev shortcut:** If `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is not set, the register API accepts the token `__dev_bypass__` automatically. The register page sends this token when no site key is configured.
+Full variable-by-variable reference, sensitivity, and where to get each one:
+**`docs/ENV_TROUBLESHOOTING.md`**.
 
-## Database Setup
+## Database
 
-Run these migrations in the Supabase SQL editor (**Dashboard → SQL Editor**).
-
-```sql
--- Enable UUID extension
-create extension if not exists "pgcrypto";
-
--- Registrations
-create table registrations (
-  id              uuid primary key default gen_random_uuid(),
-  access_token    uuid not null default gen_random_uuid(),
-  email           text not null,
-  full_name       text not null,
-  phone           text not null,
-  line_id         text not null,
-  current_status  text not null,
-  university      text not null,
-  major           text not null,
-  job_title       text,
-  english_level   text not null,
-  studied_abroad  boolean not null default false,
-  overseas_work   boolean not null default false,
-  reasons         text[] not null default '{}',
-  career_goal     text not null,
-  hear_about      text not null,
-  next_step       text not null,
-  status          text not null default 'pending',  -- pending | paid | failed
-  created_at      timestamptz not null default now()
-);
-
-create unique index registrations_email_idx on registrations (lower(email))
-  where status != 'failed';
-
-create unique index registrations_access_token_idx on registrations (access_token);
-
--- Orders
-create table orders (
-  id                  uuid primary key default gen_random_uuid(),
-  registration_id     uuid not null references registrations(id) on delete cascade,
-  package             text not null,          -- online | offline
-  installments        int  not null,          -- 1 | 3 | 6 | 12
-  amount_idr          int  not null,
-  status              text not null default 'pending',  -- pending | paid | expired
-  xendit_invoice_id   text,
-  xendit_invoice_url  text,
-  paid_at             timestamptz,
-  created_at          timestamptz not null default now()
-);
-
-create index orders_registration_idx on orders (registration_id);
-
--- Installment schedules
-create table installment_schedules (
-  id                  uuid primary key default gen_random_uuid(),
-  registration_id     uuid not null references registrations(id) on delete cascade,
-  order_id            uuid references orders(id) on delete set null,
-  installment_no      int  not null,
-  total_count         int  not null,
-  amount_idr          int  not null,
-  due_date            date not null,
-  status              text not null default 'pending',  -- pending | paid
-  xendit_invoice_id   text,
-  xendit_invoice_url  text,
-  paid_at             timestamptz,
-  created_at          timestamptz not null default now()
-);
-
-create index schedules_registration_idx on installment_schedules (registration_id);
-create index schedules_order_idx        on installment_schedules (order_id);
-```
-
-> **Row Level Security:** The service-role key bypasses RLS. You can enable RLS on all tables — it won't affect the app since it only uses the service-role client server-side.
-
-## Third-Party Configuration
-
-### Supabase
-1. Create a project at [supabase.com](https://supabase.com)
-2. Run the SQL migrations above
-3. Copy **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
-4. Copy **service_role** key (Settings → API) → `SUPABASE_SERVICE_ROLE_KEY`
-
-### Xendit
-1. Create an account at [xendit.co](https://xendit.co)
-2. Dashboard → Settings → API Keys → copy **Secret Key** → `XENDIT_SECRET_KEY`
-3. Dashboard → Settings → Callbacks → Invoice callback URL:
-   ```
-   https://yourdomain.com/api/xendit-webhook
-   ```
-4. Set a **Callback Token** (any random string) → `XENDIT_WEBHOOK_TOKEN` — set the same value in the dashboard
-
-### Resend
-1. Create an account at [resend.com](https://resend.com)
-2. Add and verify your sending domain (Domains → Add Domain)
-3. API Keys → Create API Key → `RESEND_API_KEY`
-4. Use a verified domain address for `RESEND_FROM_EMAIL`
-
-### Cloudflare Turnstile
-1. Cloudflare Dashboard → Turnstile → Add Site
-2. Add your domain(s) to **Allowed Origins** (include `localhost` for dev)
-3. Copy **Site Key** → `NEXT_PUBLIC_TURNSTILE_SITE_KEY`
-4. Copy **Secret Key** → `TURNSTILE_SECRET_KEY`
-
-> **Test keys** (always pass, no Cloudflare connection needed):
-> - Site key: `1x00000000000000000000AA`
-> - Secret key: `1x0000000000000000000000000000000AA`
-
-### Upstash Redis
-1. Create a database at [upstash.com](https://upstash.com) → Redis → Create Database
-2. Copy **REST URL** → `UPSTASH_REDIS_REST_URL`
-3. Copy **REST Token** → `UPSTASH_REDIS_REST_TOKEN`
-
-### Vercel Cron (installment retry)
-The daily cron at `0 0 * * *` (midnight UTC) retries any installment invoices that weren't created by the webhook.
-
-1. Deploy to Vercel — `vercel.json` registers the cron automatically
-2. Vercel Dashboard → Project Settings → Environment Variables → add `CRON_SECRET` (any random string)
-3. Vercel injects `Authorization: Bearer <CRON_SECRET>` on cron requests automatically
+Three tables: `registrations` (one row per applicant) and, for the installment path,
+`installment_plans` + `installments`. Full migration SQL is in **`docs/TESTING_PAYMENT.md`, steps
+1 and 1b** — that's the copy-pasteable source of truth, not duplicated here. RLS is optional
+defense-in-depth only; every query goes through the service-role client server-side (see "RLS" in
+`docs/PAYMENT.md`).
 
 ## Local Development
 
 ```bash
 npm install
-cp .env.local.example .env.local   # fill in values
 npm run dev
 ```
 
-To test the Xendit webhook locally, expose your dev server with [ngrok](https://ngrok.com):
+Rate limiting is skipped entirely in `NODE_ENV=development` (no Upstash account needed to run
+locally — see `lib/ratelimit.ts`). Turnstile has a dev-bypass path too when no site key is
+configured. To test the Xendit webhook locally you need a public URL — see `docs/TESTING_PAYMENT.md`
+for the full ngrok + test-mode walkthrough.
 
 ```bash
-ngrok http 3000
+npm run typecheck
+npm run test        # Vitest — pure-logic unit tests, no network/DB required
 ```
 
-Then add the ngrok domain to:
-- `next.config.ts` → `allowedDevOrigins`
-- Xendit dashboard callback URL
-- Cloudflare Turnstile allowed origins
+Test coverage today is deliberately narrow: pricing/installment math
+(`lib/constants/payment.ts`), the admin status derivation
+(`lib/admin/status.ts`), and the constant-time token comparison
+(`lib/timing-safe.ts`) — the logic that's cheapest to get wrong silently and
+cheapest to test without mocking Supabase/Xendit. The API routes themselves
+have no automated coverage yet.
 
-## Payment Flow
+## Payment Flow (short version)
 
 ```
-User fills register form
-  → POST /api/register
-    → creates registrations row (access_token generated automatically)
-    → sends confirmation email with /my?token=xxx link
-  → if nextStep === "payment": redirect to /checkout?rid=xxx&token=xxx
+Register wizard → POST /api/register → registrations row created, confirmation email sent
+                   with a /[lang]/my?token=<accessToken> link
 
-User selects package + installment plan
-  → POST /api/checkout  (sends registrationId + accessToken for ownership check)
-    → verifies registration ownership (registrationId + accessToken must match)
-    → creates Xendit invoice for installment 1
-    → creates all installment_schedules rows (installments 2+ have order_id = null)
-  → redirect to Xendit invoice page
+/my (token page) → PaymentStep → POST /api/payment/session → Xendit Sessions API
+                   → embedded card form (iframe, no redirect) → session-complete event
+                   → client polls /api/payment/status until the webhook has landed
 
-User pays on Xendit
-  → Xendit calls POST /api/xendit-webhook
-    → marks order + registration as paid
-    → marks installment_schedule 1 as paid
-    → creates Xendit invoice for installment 2 (if applicable)
-    → sends payment confirmation email
+Xendit → POST /api/payment/webhook → verifies callback token → atomically marks the
+         matching registration paid → sends confirmation email
 
-Subsequent installments
-  → webhook repeats: marks paid, creates next invoice, sends email
-  → if webhook fails mid-chain: daily cron finds orphaned schedules (order_id IS NULL)
-    and retries invoice creation
-
-User can always check status at /my?token=xxx (no login required)
+If payment_type = "installment": /my instead shows InstallmentPaymentPanel — a fixed 4x
+saved-card plan on a separate Xendit surface (Payments API). See docs/PAYMENT.md → "Installment plan."
 ```
 
-## Rate Limits
+Full architecture, every security decision, and why each one was made:
+**`docs/PAYMENT.md`** — read this before touching anything under `app/api/payment/`,
+`components/payment/`, or `lib/xendit.ts`.
 
-| Limiter | Window | Limit | Key |
-|---|---|---|---|
-| `registerLimiter` | 1 hour | 5 requests | IP |
-| `emailRegisterLimiter` | 24 hours | 1 request | email (lowercase) |
-| `checkoutLimiter` | 1 hour | 3 requests | IP |
-| `statusLimiter` | 1 hour | 30 requests | IP |
+## Other Docs
 
-## Security
-
-- **CSP**: Per-request nonce via `middleware.ts`. Next.js 16 reads the nonce from the `content-security-policy` request header and stamps its own inline scripts. No `unsafe-inline` for scripts in production.
-- **Ownership verification**: Every checkout request requires both `registrationId` and `accessToken`. A wrong token is indistinguishable from "not found" (no enumeration).
-- **Webhook auth**: Timing-safe comparison of `x-callback-token` against `XENDIT_WEBHOOK_TOKEN`.
-- **Bot protection**: Cloudflare Turnstile on registration form + honeypot field.
-- **Secrets**: All server secrets validated at startup via `lib/env.ts` — missing vars throw before any request is served.
-- **Referrer-Policy: no-referrer** on `/checkout` and `/my/*` to prevent access tokens leaking via Referer header.
+| Doc | What it's for |
+|---|---|
+| `docs/PAYMENT.md` | Xendit payment architecture, security decisions, known gaps |
+| `docs/TESTING_PAYMENT.md` | Step-by-step checklist to run the payment flow end-to-end, incl. the DB migration SQL |
+| `docs/DEPLOYMENT.md` | Netlify launch checklist, in order |
+| `docs/ENV_TROUBLESHOOTING.md` | Every env var, what it's for, and symptom → cause → fix |
+| `docs/LEARN.md` | Deep-dive teaching guide — Next.js concepts + how this specific codebase works |
