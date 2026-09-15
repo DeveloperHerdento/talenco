@@ -1,6 +1,7 @@
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { Stagger, StaggerItem } from "@/components/ui/Stagger";
+import { HoverIconBadge } from "@/components/ui/HoverIconBadge";
 import { PARTICIPANTS } from "@/lib/constants/participants";
 import type { Dictionary } from "@/lib/i18n/dictionary";
 
@@ -21,13 +22,7 @@ export function Participants({ dict }: { dict: Dictionary["participants"] }) {
                   <p className="flex-1 text-base font-normal tracking-wide text-black transition-colors duration-300 group-hover:text-white">
                     {dict.items[participant.key]}
                   </p>
-                  <div className="flex size-[45px] shrink-0 items-center justify-center rounded-full border-[0.5px] border-[#ff9977] bg-[rgba(255,192,114,0.3)] transition-colors duration-300 group-hover:border-white/40 group-hover:bg-white/20">
-                    <Icon
-                      size={20}
-                      strokeWidth={1.75}
-                      className="text-brand-orange transition-colors duration-300 group-hover:text-white"
-                    />
-                  </div>
+                  <HoverIconBadge icon={Icon} size={45} iconSize={20} />
                 </div>
               </StaggerItem>
             );
