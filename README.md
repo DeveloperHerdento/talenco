@@ -187,13 +187,3 @@ saved-card plan on a separate Xendit surface (Payments API). See docs/PAYMENT.md
 Full architecture, every security decision, and why each one was made:
 **`docs/PAYMENT.md`** — read this before touching anything under `app/api/payment/`,
 `components/payment/`, or `lib/xendit.ts`.
-
-## Other Docs
-
-| Doc | What it's for |
-|---|---|
-| `docs/PAYMENT.md` | Xendit payment architecture, security decisions, known gaps |
-| `docs/TESTING_PAYMENT.md` | Step-by-step checklist to run the payment flow end-to-end, incl. the DB migration SQL |
-| `docs/DEPLOYMENT.md` | Netlify launch checklist, in order |
-| `docs/ENV_TROUBLESHOOTING.md` | Every env var, what it's for, and symptom → cause → fix |
-| `docs/LEARN.md` | Deep-dive teaching guide — Next.js concepts + how this specific codebase works |
