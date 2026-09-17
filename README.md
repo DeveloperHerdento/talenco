@@ -1,4 +1,3 @@
-# TalenCo — Global Career Starter Program
 
 Marketing site, bilingual (ja/en) registration wizard, and embedded Xendit card-payment flow for
 the TalenCo Global Career Starter Program.
