@@ -301,7 +301,7 @@ function Step1({
           }}
         />
       </FieldWrap>
-      <FieldWrap label="LINE ID" sublabel="LINE ID" required error={errors.lineId}>
+      <FieldWrap label="LINE ID" sublabel="LINE ID" error={errors.lineId}>
         <TextInput value={data.lineId} onChange={(v) => onChange("lineId", v)} maxLength={50} />
       </FieldWrap>
     </div>
@@ -537,7 +537,6 @@ export function RegisterForm({ locale }: { locale: string }) {
       if (!data.fullName.trim()) errs.fullName = "この項目は必須です / This field is required";
       if (!/^\S+@\S+\.\S+$/.test(data.email)) errs.email = "有効なメールアドレスを入力してください / Please enter a valid email address";
       if (data.phone.trim().length < 7) errs.phone = "有効な電話番号を入力してください / Please enter a valid phone number";
-      if (!data.lineId.trim()) errs.lineId = "この項目は必須です / This field is required";
     }
     if (step === 1) {
       if (!data.currentStatus) errs.currentStatus = "この項目は必須です / This field is required";
