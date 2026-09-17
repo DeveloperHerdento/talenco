@@ -14,7 +14,7 @@ const schema = z.object({
   email: z.string().trim().toLowerCase().email().max(254),
   fullName: z.string().trim().min(2).max(100),
   phone: z.string().trim().min(7).max(30),
-  lineId: z.string().trim().min(1).max(50),
+  lineId: z.string().trim().max(50).optional().default(""),
   currentStatus: z.string().trim().min(1).max(100),
   university: z.string().trim().min(2).max(200),
   major: z.string().trim().min(1).max(200),
