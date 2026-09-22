@@ -2,6 +2,7 @@
 
 import { motion, type Variants } from "motion/react";
 import type { ReactNode } from "react";
+import { FADE_UP_EASE, FADE_UP_OFFSET } from "@/lib/constants/animation";
 
 type StaggerProps = {
   children: ReactNode;
@@ -45,8 +46,8 @@ export function Stagger({
 
 export function StaggerItem({ children, className, duration = 0.85, id }: StaggerItemProps) {
   const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 18 },
-    visible: { opacity: 1, y: 0, transition: { duration, ease: [0.16, 1, 0.3, 1] } },
+    hidden: { opacity: 0, y: FADE_UP_OFFSET },
+    visible: { opacity: 1, y: 0, transition: { duration, ease: FADE_UP_EASE } },
   };
 
   return (
