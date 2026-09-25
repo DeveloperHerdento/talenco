@@ -1,7 +1,5 @@
 import { AlertTriangle, Info } from "lucide-react";
 
-// Small inline notice bar — used for both "data failed to load" and "results are truncated"
-// states so neither ever renders as a silent empty table.
 export function Banner({ tone, children }: { tone: "error" | "info"; children: React.ReactNode }) {
   const Icon = tone === "error" ? AlertTriangle : Info;
   const cls = tone === "error" ? "border-red-200 bg-red-50 text-red-700" : "border-brand-blue/20 bg-brand-blue/5 text-brand-blue";

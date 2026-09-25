@@ -97,9 +97,6 @@ export function DocSidebarMobile({ items }: DocSidebarProps) {
   );
 }
 
-// Rendered as the sidebar column inside the grid — its cell stretches to the
-// tall content column next to it, so sticky works fine here without the
-// same restructuring the mobile bar needs.
 export function DocSidebarDesktop({ items }: DocSidebarProps) {
   const { hidden } = useScrollVisibility();
   const active = useActiveSection(items);

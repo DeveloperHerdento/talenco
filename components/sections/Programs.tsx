@@ -8,7 +8,6 @@ import type { Dictionary } from "@/lib/i18n/dictionary";
 export function Programs({ dict }: { dict: Dictionary["programs"] }) {
   return (
     <section id="programs" className="w-full py-14 md:py-18 lg:py-20">
-      {/* Shared clip-path (notched top-right corner, from public/assets/card.svg) reused by every ProgramCard. */}
       <svg width="0" height="0" className="absolute" aria-hidden="true">
         <defs>
           <clipPath id="program-card-clip" clipPathUnits="objectBoundingBox">

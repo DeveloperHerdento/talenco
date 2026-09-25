@@ -17,7 +17,6 @@ async function fetchInstallmentStatus(accessToken: string): Promise<ApiInstallme
   return json.installments as ApiInstallmentRow[];
 }
 
-// Polls until none of the targeted installments are still 'charging'.
 async function pollUntilSettled(accessToken: string, targetNos: number[], attempts = 8, intervalMs = 1500): Promise<ApiInstallmentRow[] | null> {
   let last: ApiInstallmentRow[] | null = null;
   for (let i = 0; i < attempts; i++) {

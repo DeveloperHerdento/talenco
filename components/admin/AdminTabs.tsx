@@ -24,7 +24,6 @@ type Tab = "payments" | "inquiries";
 export function AdminTabs({ paymentRows, inquiryRows, stats }: { paymentRows: PaymentRow[]; inquiryRows: Inquiry[]; stats: Stats }) {
   const [tab, setTab] = useState<Tab>("payments");
 
-  // Lifted out of each table so search/filter survive switching tabs and back.
   const [paymentSearch, setPaymentSearch] = useState("");
   const [paymentStatus, setPaymentStatus] = useState<RegistrationStatusKey | "all">("all");
   const [inquirySearch, setInquirySearch] = useState("");

@@ -3,8 +3,6 @@ import { Reveal } from "@/components/ui/Reveal";
 
 type DocTableProps = {
   headers: string[];
-  // Cells are almost always plain strings, but a couple of tables (fee
-  // callouts) want a bold/colored fragment.
   rows: ReactNode[][];
   caption?: string;
   highlightLastCol?: boolean;

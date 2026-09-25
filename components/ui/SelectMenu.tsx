@@ -5,7 +5,6 @@ import { Check, ChevronDown } from "lucide-react";
 
 export type SelectOption<T extends string> = { value: T; label: string };
 
-// Custom listbox — native <select> can't have its open option list restyled by CSS.
 export function SelectMenu<T extends string>({
   value,
   options,

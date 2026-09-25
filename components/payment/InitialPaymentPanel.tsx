@@ -17,10 +17,6 @@ type InitialPaymentPanelProps = {
 export function InitialPaymentPanel({ accessToken, locale }: InitialPaymentPanelProps) {
   const router = useRouter();
   const [paidType, setPaidType] = useState<PaymentType | null>(null);
-
-  // Installment 1 being "done" isn't the same as fully paid — send the user straight to the
-  // status page's installment tracker instead of a generic "complete" screen, so they can't
-  // mistake "1 of 4 charged" for "fully paid."
   useEffect(() => {
     if (paidType === "installment") {
       router.push(`/${locale}/my?token=${accessToken}`);

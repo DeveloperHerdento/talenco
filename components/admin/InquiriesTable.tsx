@@ -25,7 +25,6 @@ const PAGE_SIZE = 10;
 
 type Props = {
   rows: Inquiry[];
-  // Controlled by the parent tab so it survives a tab switch — see AdminTable's Props for why.
   search: string;
   onSearchChange: (value: string) => void;
 };

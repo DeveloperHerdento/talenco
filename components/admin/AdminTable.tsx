@@ -22,8 +22,6 @@ const PAGE_SIZE = 10;
 
 type Props = {
   rows: { reg: Registration; hasPlan: boolean; installments: InstallmentRow[] }[];
-  // Search/status filter are controlled by the parent tab so they survive a tab switch — page
-  // and the loading pulse stay local since resetting those on tab change is expected.
   search: string;
   onSearchChange: (value: string) => void;
   statusFilter: RegistrationStatusKey | "all";
