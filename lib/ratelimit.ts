@@ -72,8 +72,8 @@ export const statusLimiter = make(
     })
 );
 
-// Applied only to requests that already failed the x-callback-token check (see
-// app/api/payment/webhook/route.ts) — legitimate Xendit deliveries never hit this limiter, so it
+// Applied only to requests that already failed the forward-signature check (see
+// app/api/payment/webhook/route.ts) — legitimate peeka deliveries never hit this limiter, so it
 // can stay tight without any risk of throttling real traffic.
 export const webhookLimiter = make(
   () =>

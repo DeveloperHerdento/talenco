@@ -1,4 +1,5 @@
 import { NextRequest, after } from "next/server";
+import { createHmac } from "crypto";
 import { z } from "zod";
 import { supabase } from "@/lib/supabase";
 import { env } from "@/lib/env";
@@ -9,16 +10,19 @@ import { timingSafeStringEqual } from "@/lib/timing-safe";
 import { webhookLimiter } from "@/lib/ratelimit";
 import { getClientIp } from "@/lib/request";
 import { sendOpsAlert } from "@/lib/alerts";
-import { forwardWebhookToDestinations } from "@/lib/webhook-forward";
 import { sendInstallmentPaidEmail, sendInstallmentFailedEmail } from "@/lib/emails/installments";
 import { emailLogoHeader, emailLogoAttachment, emailLineGroupInvite, emailLineGroupAttachment } from "@/lib/emails/layout";
 
 // reference_id is minted as `${planId}-${mode}-${timestamp}` — the fixed-length UUID prefix.
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-function tokenValid(header: string | null): boolean {
+// Xendit calls peeka (peekainsight.com) directly, not us — peeka relays the raw payload here,
+// signed with the shared PEEKA_FORWARD_SECRET. Same "sha256=<hex hmac>" scheme this app used to
+// sign its own outbound forwards with.
+function forwardSignatureValid(header: string | null, rawBody: string): boolean {
   if (!header) return false;
-  return timingSafeStringEqual(header, env.xenditWebhookToken);
+  const expected = `sha256=${createHmac("sha256", env.peekaForwardSecret).update(rawBody).digest("hex")}`;
+  return timingSafeStringEqual(header, expected);
 }
 
 const payloadSchema = z.object({
@@ -190,26 +194,25 @@ async function handlePaymentCapture(rawPayload: unknown) {
 }
 
 export async function POST(request: NextRequest) {
-  if (!tokenValid(request.headers.get("x-callback-token"))) {
-    // Rate-limited only on the failed-auth path — Xendit's own deliveries always carry a valid
-    // token, so this can't throttle legitimate webhook traffic.
+  const rawBody = await request.text();
+
+  if (!forwardSignatureValid(request.headers.get("x-forward-signature"), rawBody)) {
+    // Rate-limited only on the failed-auth path — peeka's own deliveries always carry a valid
+    // signature, so this can't throttle legitimate webhook traffic.
     const { success: allowed } = await webhookLimiter.limit(getClientIp(request));
     if (!allowed) {
       return Response.json({ error: "Too many requests" }, { status: 429 });
     }
-    logger.warn("Payment webhook: invalid callback token");
+    logger.warn("Payment webhook: invalid forward signature");
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const rawBody = await request.text();
   let rawPayload: unknown;
   try {
     rawPayload = JSON.parse(rawBody);
   } catch {
     return Response.json({ error: "Invalid request body" }, { status: 400 });
   }
-
-  forwardWebhookToDestinations(rawBody);
 
   const eventName = (rawPayload as { event?: unknown } | null)?.event;
   if (eventName === "payment.capture") return handlePaymentCapture(rawPayload);

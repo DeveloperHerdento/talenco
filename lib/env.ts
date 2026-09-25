@@ -8,7 +8,7 @@ const REQUIRED_SERVER = [
   "UPSTASH_REDIS_REST_TOKEN",
   "TURNSTILE_SECRET_KEY",
   "XENDIT_SECRET_KEY",
-  "XENDIT_WEBHOOK_TOKEN",
+  "PEEKA_FORWARD_SECRET",
   "INSTALLMENT_CRON_SECRET",
   "ADMIN_PASSWORD",
 ] as const;
@@ -30,7 +30,9 @@ export const env = {
   upstashRedisToken: process.env.UPSTASH_REDIS_REST_TOKEN!,
   turnstileSecretKey: process.env.TURNSTILE_SECRET_KEY!,
   xenditSecretKey: process.env.XENDIT_SECRET_KEY!,
-  xenditWebhookToken: process.env.XENDIT_WEBHOOK_TOKEN!,
+  // Verifies the HMAC signature peeka (peekainsight.com) attaches when it relays a Xendit
+  // webhook to us — Xendit itself now calls peeka, not this app, directly (Netlify function limits).
+  peekaForwardSecret: process.env.PEEKA_FORWARD_SECRET!,
   installmentCronSecret: process.env.INSTALLMENT_CRON_SECRET!,
   adminPassword: process.env.ADMIN_PASSWORD!,
   appUrl: (() => {
@@ -39,13 +41,4 @@ export const env = {
   })(),
   // Optional — when set, payment reconciliation problems email this address (see lib/alerts.ts).
   opsAlertEmail: process.env.OPS_ALERT_EMAIL || null,
-  // Optional fan-out destinations for the payment webhook (see lib/webhook-forward.ts). Each
-  // needs its own URL + se cret pair — never reuse xenditWebhookToken as a forward signing key,
-  // since that's also what authenticates inbound calls from Xendit itself.
-  forwardApp2Url: process.env.FORWARD_APP2_URL || null,
-  forwardApp2Secret: process.env.FORWARD_APP2_SECRET || null,
-  forwardApp3Url: process.env.FORWARD_APP3_URL || null,
-  forwardApp3Secret: process.env.FORWARD_APP3_SECRET || null,
-  forwardTimeoutMs: process.env.FORWARD_TIMEOUT_MS ? Number(process.env.FORWARD_TIMEOUT_MS) : 5000,
-  forwardMaxRetries: process.env.FORWARD_MAX_RETRIES ? Number(process.env.FORWARD_MAX_RETRIES) : 3,
 };
