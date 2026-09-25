@@ -32,7 +32,7 @@ app/
     register/route.ts            POST — validates, verifies Turnstile, inserts registration
     payment/
       session/route.ts           POST — creates the full-payment Xendit session
-      webhook/route.ts           POST — Xendit calls this; sole authority for marking paid
+      webhook/route.ts           POST — peeka relays Xendit's webhook here; sole authority for marking paid
       status/route.ts            GET  — polled by the client to confirm the webhook landed
       installment-session/route.ts       POST — installment 1 (saves a reusable card token)
       installment-charge-now/route.ts    POST — user-initiated "pay next"/"pay all remaining"
@@ -100,7 +100,9 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ...
 
 # Xendit
 XENDIT_SECRET_KEY=xnd_development_...           # xnd_production_... in prod
-XENDIT_WEBHOOK_TOKEN=any_random_string          # same value set in the Xendit dashboard
+# Xendit calls peeka (peekainsight.com) directly; peeka relays the webhook to us, HMAC-signed
+# with this shared secret. Must match the secret peeka signs with.
+PEEKA_FORWARD_SECRET=any_random_string
 INSTALLMENT_CRON_SECRET=any_random_string       # protects GET /api/payment/installment-run-schedule
 
 # Resend
@@ -120,14 +122,6 @@ ADMIN_PASSWORD=any_strong_shared_password       # single shared password, no use
 
 # App
 NEXT_PUBLIC_APP_URL=http://localhost:3000       # production: your real domain
-
-# Optional — fan-out the payment webhook to other systems (see docs/WEBHOOK_FANOUT_PLAN.md)
-FORWARD_APP2_URL=
-FORWARD_APP2_SECRET=                            # own random secret, never reuse XENDIT_WEBHOOK_TOKEN
-FORWARD_APP3_URL=
-FORWARD_APP3_SECRET=
-FORWARD_TIMEOUT_MS=5000
-FORWARD_MAX_RETRIES=3
 
 OPS_ALERT_EMAIL=                                # emails reconciliation problems here instead of only logging
 ```
@@ -177,8 +171,9 @@ Register wizard → POST /api/register → registrations row created, confirmati
                    → embedded card form (iframe, no redirect) → session-complete event
                    → client polls /api/payment/status until the webhook has landed
 
-Xendit → POST /api/payment/webhook → verifies callback token → atomically marks the
-         matching registration paid → sends confirmation email
+Xendit → peeka (peekainsight.com) → POST /api/payment/webhook → verifies peeka's HMAC
+         forward signature → atomically marks the matching registration paid → sends
+         confirmation email
 
 If payment_type = "installment": /my instead shows InstallmentPaymentPanel — a fixed 4x
 saved-card plan on a separate Xendit surface (Payments API). See docs/PAYMENT.md → "Installment plan."
